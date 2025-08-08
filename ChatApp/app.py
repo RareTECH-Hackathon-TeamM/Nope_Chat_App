@@ -3,12 +3,9 @@ from flask import (
         redirect,
         url_for,
         render_template,
-        request,
-        session,
-        flash
+        flash,
+        send_file
         )
-from forms import SignupForm, LoginForm
-
 from flask_login import (
         LoginManager,
         login_user,
@@ -22,9 +19,16 @@ from flask_bcrypt import (
         check_password_hash
         )
 from datetime import timedelta
-import uuid
+from forms import (SignupForm,
+                   LoginForm,
+                   SearchForm,
+                   )
+import io
+from models import User, Room
+from nanoid import generate
 import os
-from models import User
+import qrcode
+import uuid
 
 SESSION_DAYS = 7
 
@@ -42,9 +46,9 @@ bcrypt = Bcrypt(app)
 
 @login_manager.user_loader
 def load_user(uid):
-    print(f'[load_user] uid: {uid}')
+    # print(f'[load_user] uid: {uid}')
     user = User.get_by_id(uid)
-    print(f'[load_user] user: {user}')
+    # print(f'[load_user] user: {user}')
     return user
 
 
@@ -104,7 +108,7 @@ def login():
         if not user:
             flash('このユーザーは存在しません')
         else:
-            if user and check_password_hash(
+            if check_password_hash(
                             user.password,
                             form.password.data
                             ):
@@ -127,18 +131,72 @@ def logout():
 @app.route('/home', methods=['GET'])
 @login_required
 def home_view():
-    return render_template('home.html')
+    form = SearchForm()
+    uid = current_user.get_id()
+    rooms = Room.get_all_friends(uid)
+    return render_template('home.html',
+                           form=form,
+                           rooms=rooms
+                           )
 
 
-# 友達を追加する(友達 == ルーム)
-@app.route('/friend/add', methods=['POST'])
+@app.route('/home', methods=['POST'])
+@login_required
+def home():
+    pass
+
+
+# 友達を追加する
+@app.route('/room/add', methods=['POST'])
 @login_required
 def add_friend():
+    uid = current_user.get_id()
+    room_id = generate(size=10)
+    Room.add_room(uid, room_id)
+    return redirect(url_for('invite_sender_view', room_id=room_id))
+
+
+# QRコードを表示する画面に遷移
+@app.route('/invite/sender/<room_id>', methods=['GET'])
+@login_required
+def invite_sender_view(room_id):
+    return render_template('invite_sender.html', room_id=room_id)
+
+
+# QRコード読み取り後遷移する画面
+@app.route('/invite/receiver/<room_id>', methods=['GET'])
+@login_required
+def invite_receiver_view(room_id):
+    return render_template('invite_receiver.html', room_id=room_id)
+
+
+# 友達追加したときの処理
+@app.route('/invite/receiver/<room_id>', methods=['POST'])
+@login_required
+def invite_receiver(room_id):
+    uid = current_user.get_id()
+    Room.add_friend(uid, room_id)
     return redirect(url_for('home_view'))
 
 
+# QRコードを返す
+@app.route('/invite/qrcode/<room_id>')
+@login_required
+def invite_qrcode(room_id):
+    invite_url = url_for(
+            'invite_receiver_view',
+            room_id=room_id,
+            _external=True
+            )
+    qr = qrcode.make(invite_url)
+    buf = io.BytesIO()
+    qr.save(buf, format='PNG')
+    buf.seek(0)
+    return send_file(buf, mimetype='image/png')
+
+
 # 友達を削除する(友達 == ルーム)
-@app.route('/friend/delete/<int:room_id>', methods=['POST'])
+@app.route('/room/delete/<room_id>', methods=['POST'])
 @login_required
 def delete_friend():
     return redirect(url_for('home_view'))
@@ -146,28 +204,29 @@ def delete_friend():
 
 # メッセージ画面
 # ルーム内のメッセージを一覧表示
-@app.route('/room/<int:room_id>/message', methods=['GET'])
+@app.route('/room/<room_id>/message', methods=['GET'])
 @login_required
 def messages_view():
     return render_template('messages.html')
 
 
 # ルーム内でフレンドにメッセージを送信する
-@app.route('/room/<int:room_id>/add/message', methods=['POST'])
+@app.route('/room/<room_id>/add/message', methods=['POST'])
 @login_required
 def add_message():
+    # id = nanoid.generate()で生成(21文字)
     return redirect(url_for('messages_view'))
 
 
 # ルーム内でフレンドに送信したメッセージを編集する
-@app.route('/messages/edit/<int:message_id>', methods=['POST'])
+@app.route('/messages/edit/<message_id>', methods=['POST'])
 @login_required
 def edit_message():
     return redirect(url_for('messages_view'))
 
 
 # ルーム内でフレンドに送信したメッセージを削除する
-@app.route('/messages/delete/<int:message_id>', methods=['POST'])
+@app.route('/messages/delete/<message_id>', methods=['POST'])
 @login_required
 def delete_message():
     return redirect(url_for('messages_view'))
