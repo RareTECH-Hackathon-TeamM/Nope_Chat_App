@@ -170,7 +170,7 @@ def invite_receiver_view(room_id):
     return render_template('invite_receiver.html', room_id=room_id)
 
 
-# QRコード読み取り後遷移する画面
+# 友達追加したときの処理
 @app.route('/invite/receiver/<room_id>', methods=['POST'])
 @login_required
 def invite_receiver(room_id):
