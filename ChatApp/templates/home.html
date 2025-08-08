@@ -8,6 +8,50 @@
   <title></title>
 </head>
 <body>
-<h1>Hello Home!</h1>
+  <header>
+    <form method="POST" action="{{url_for('add_friend')}}">
+      <button type="submit">友達追加</button>
+    </form>
+    <form method="POST" action="{{url_for('logout')}}">
+      <button type="submit">ログアウト</button>
+    </form>
+  </header>
+		<h2>ルーム一覧</h2>
+		<table border="1">
+			<thead>
+				<tr>
+					<th>name</th>
+					<th>message</th>
+					<th>datetime</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for room in rooms %}
+				<tr>
+          <td>{{ room.friend_name }}</td>
+					<td>{{ room.latest_message }}</td>
+					<td>{{ room.latest_time }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+  <form method="POST" action="{{ url_for('home_view') }}">
+    {{ form.hidden_tag() }}
+    <p>
+      {{ form.search_friend.label }}<br>
+      {{ form.search_friend(size=32) }}<br>
+      {% for error in form.search_friend.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul class="flashes">
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+  </form>
 </body>
 </html>

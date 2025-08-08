@@ -15,6 +15,9 @@
         <span style="color: red;">[{{ error }}]</span>
       {% endfor %}
     </p>
+      {% for error in form.username.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
     <p>
       {{ form.password.label }}<br>
       {{ form.password(size=32) }}<br>
@@ -23,6 +26,13 @@
       {% endfor %}
     </p>
     <p>{{ form.submit() }}</p>
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul class="flashes">
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
   </form>
   <a href="{{ url_for('signup') }}">新規登録</a>
 </body>
