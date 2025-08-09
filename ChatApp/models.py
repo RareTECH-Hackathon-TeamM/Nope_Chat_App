@@ -109,6 +109,7 @@ class Room:
             with conn.cursor() as cur:
                 sql = """
                         SELECT
+                            r.id AS room_id,
                             r.name AS room_name, -- DMではNULL
                             r.room_type, -- DMのみ
                             u.name AS friend_name,
@@ -229,8 +230,6 @@ class Message:
                         -- -----------------------------------
                         WHERE
                             m.room_id = %s
-                        AND r.is_available = 1
-                        AND r.room_type = 'dm'
                         -- -----------------------------------
                         -- 一番新しいメッセージが下にくるように並べる
                         ORDER BY
@@ -245,14 +244,39 @@ class Message:
         finally:
             db_pool.release(conn)
 
+    # messagesにレコードを追加する処理
     @classmethod
-    def last_sender(cls, name):
+    def add_message(cls, message_id, uid, room_id, message):
+        conn = db_pool.get_conn()
+        try:
+            with conn.cursor() as cur:
+                sql = "INSERT INTO messages (id, uid, room_id, message) VALUES (%s, %s, %s, %s);"
+                cur.execute(sql, (message_id, uid, room_id, message))
+                # データベースに変更を反映(保存)する
+                conn.commit()
+        except pymysql.Error as e:
+            print(f'エラーが発生しています：{e}')
+            abort(500)
+        finally:
+            db_pool.release(conn)
+
+    @classmethod
+    def last_sender(cls, room_id):
         conn = db_pool.get_conn()
         try:
             with conn.cursor() as cur:
                 # 今いてるルームの最後のメッセージの送信者を取得
-                sql = ""
-                cur.execute(sql, (name,))
+                sql = """
+                    SELECT uid
+                    FROM messages
+                    WHERE room_id = %s
+                    AND updated_at = (
+                        SELECT MAX(updated_at)
+                        FROM messages
+                        WHERE room_id = %s
+                        );
+                    """
+                cur.execute(sql, (room_id, room_id))
                 user = cur.fetchone()
                 return user
         except pymysql.Error as e:
