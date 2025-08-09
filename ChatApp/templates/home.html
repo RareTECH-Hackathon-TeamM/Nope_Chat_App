@@ -23,6 +23,7 @@
 					<th>name</th>
 					<th>message</th>
 					<th>datetime</th>
+					<th>open</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -31,6 +32,7 @@
           <td>{{ room.friend_name }}</td>
 					<td>{{ room.latest_message }}</td>
 					<td>{{ room.latest_time }}</td>
+          <td><a href="{{ url_for('messages_view', room_id=room.room_id) }}">open</a></td>
 				</tr>
 				{% endfor %}
 			</tbody>

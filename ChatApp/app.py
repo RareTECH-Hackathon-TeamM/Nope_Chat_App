@@ -22,9 +22,10 @@ from datetime import timedelta
 from forms import (SignupForm,
                    LoginForm,
                    SearchForm,
+                   MessageForm
                    )
 import io
-from models import User, Room
+from models import User, Room, Message
 from nanoid import generate
 import os
 import qrcode
@@ -140,6 +141,7 @@ def home_view():
                            )
 
 
+# 既存のルームの絞込検索
 @app.route('/home', methods=['POST'])
 @login_required
 def home():
@@ -195,7 +197,7 @@ def invite_qrcode(room_id):
     return send_file(buf, mimetype='image/png')
 
 
-# 友達を削除する(友達 == ルーム)
+# 友達を削除する
 @app.route('/room/delete/<room_id>', methods=['POST'])
 @login_required
 def delete_friend():
@@ -204,18 +206,34 @@ def delete_friend():
 
 # メッセージ画面
 # ルーム内のメッセージを一覧表示
-@app.route('/room/<room_id>/message', methods=['GET'])
+@app.route('/room/<room_id>/messages', methods=['GET'])
 @login_required
-def messages_view():
-    return render_template('messages.html')
+def messages_view(room_id):
+    form = MessageForm()
+    uid = current_user.get_id()
+    messages = Message.get_all_messages(uid, room_id)
+    return render_template(
+            'messages.html',
+            form=form,
+            room_id=room_id,
+            messages=messages
+            )
 
 
 # ルーム内でフレンドにメッセージを送信する
 @app.route('/room/<room_id>/add/message', methods=['POST'])
 @login_required
-def add_message():
-    # id = nanoid.generate()で生成(21文字)
-    return redirect(url_for('messages_view'))
+def add_message(room_id):
+    form = MessageForm()
+
+    # 入力内容がバリテーションチェックが通ったときの処理
+    if form.validate_on_submit():
+        message_id = generate()
+        uid = current_user.get_id()
+        message = form.message.data
+        Message.add_message(message_id, uid, room_id, message)
+        return redirect(url_for('messages_view', room_id=room_id))
+    return render_template('messages.html', form=form)
 
 
 # ルーム内でフレンドに送信したメッセージを編集する
