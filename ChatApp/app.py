@@ -228,12 +228,15 @@ def add_message(room_id):
 
     # 入力内容がバリテーションチェックが通ったときの処理
     if form.validate_on_submit():
-        message_id = generate()
+        last_sender_uid = Message.last_sender(room_id)['uid']
         uid = current_user.get_id()
-        message = form.message.data
-        Message.add_message(message_id, uid, room_id, message)
-        return redirect(url_for('messages_view', room_id=room_id))
-    return render_template('messages.html', form=form)
+        print(f'最後の送信者は{last_sender_uid}です。ログインユーザは{uid}です。')
+        if last_sender_uid != uid:
+            message_id = generate()
+            message = form.message.data
+            Message.add_message(message_id, uid, room_id, message)
+            return redirect(url_for('messages_view', room_id=room_id))
+    return redirect(url_for('messages_view', room_id=room_id, form=form))
 
 
 # ルーム内でフレンドに送信したメッセージを編集する
