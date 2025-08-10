@@ -16,27 +16,22 @@
       <button type="submit">ログアウト</button>
     </form>
   </header>
-		<h2>ルーム一覧</h2>
-		<table border="1">
-			<thead>
-				<tr>
-					<th>name</th>
-					<th>message</th>
-					<th>datetime</th>
-					<th>open</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for room in rooms %}
-				<tr>
-          <td>{{ room.friend_name }}</td>
-					<td>{{ room.latest_message }}</td>
-					<td>{{ room.latest_time }}</td>
-          <td><a href="{{ url_for('messages_view', room_id=room.room_id) }}">open</a></td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+  <h2>ルーム一覧</h2>
+  <div id="rooms-area" style="border: double 1px">
+    {% for room in rooms %}
+    <div class="my-rooms" style="border: double 1px">
+      <p>{{ room.friend_name }}</p>
+      <p>{{ room.latest_message }}</p>
+      <p>{{ room.latest_time }}</p>
+      <form method="GET" action="{{ url_for('messages_view', room_id=room.room_id) }}">
+        <input type="submit" value="open">
+      </form>
+      <form method="POST" action="{{ url_for('delete_room', room_id=room.room_id) }}">
+        <input type="submit" value="delete">
+      </form>
+    </div>
+    {% endfor %}
+  </div>
   <form method="POST" action="{{ url_for('home_view') }}">
     {{ form.hidden_tag() }}
     <p>

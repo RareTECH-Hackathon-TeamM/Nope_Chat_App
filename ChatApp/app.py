@@ -197,10 +197,11 @@ def invite_qrcode(room_id):
     return send_file(buf, mimetype='image/png')
 
 
-# 友達を削除する
-@app.route('/room/delete/<room_id>', methods=['POST'])
+# ルームを論理削除
+@app.route('/room/delete/<room_id>', methods=['DELETE'])
 @login_required
-def delete_friend():
+def delete_room(room_id):
+    Room.delete_room(room_id)
     return redirect(url_for('home_view'))
 
 
