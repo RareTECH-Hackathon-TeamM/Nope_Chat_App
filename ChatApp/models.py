@@ -161,15 +161,13 @@ class Room:
             db_pool.release(conn)
 
     @classmethod
-    def find_room(cls, friend_name):
+    def delete_room(cls, room_id):
         conn = db_pool.get_conn()
         try:
             with conn.cursor() as cur:
-                sql = """
-                    """
-                cur.execute(sql, (friend_name,))
-                rooms = cur.fetchall()
-                return rooms
+                sql = "UPDATE rooms SET is_available = 0 WHERE id = %s"
+                cur.execute(sql, (room_id,))
+                conn.commit()
         except pymysql.Error as e:
             print(f'error: {e}')
             abort(500)
