@@ -8,9 +8,9 @@
   <title>メッセージ</title>
 </head>
 <body>
-  <div id="message-area">
+  <div id="message-area" style="border: double 1px">
     {% for message in messages %}
-    <div class="my-messages">
+    <div class="my-messages" style="border: double 1px">
       <p>{{ message.user_name }}</p>
       <p>{{ message.message }}</p>
       <p>{{ message.updated_at }}</p>
