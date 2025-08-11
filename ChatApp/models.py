@@ -16,6 +16,7 @@ class User(UserMixin):
     def get_id(self):
         return self.uid
 
+    # 新規登録トランザクション
     @classmethod
     def create(cls, uid, name, email, password):
         conn = db_pool.get_conn()
@@ -33,6 +34,7 @@ class User(UserMixin):
         finally:
             db_pool.release(conn)
 
+    # ログイン用トランザクション
     @classmethod
     def get_by_id(cls, uid):
         conn = db_pool.get_conn()
@@ -56,7 +58,7 @@ class User(UserMixin):
         finally:
             db_pool.release(conn)
 
-    # ログイン時にDBに登録済みかの確認
+    # 登録ユーザ判別用トランザクション(ログイン時)
     @classmethod
     def find_username(cls, name):
         conn = db_pool.get_conn()
@@ -80,7 +82,7 @@ class User(UserMixin):
         finally:
             db_pool.release(conn)
 
-    # 新規登録時にDBに登録済みかの確認
+    # 登録ユーザ判別用トランザクション(新規登録時)
     @classmethod
     def find_email(cls, email):
         conn = db_pool.get_conn()
@@ -101,8 +103,8 @@ class User(UserMixin):
 
 
 class Room:
+    # ルーム全件取得トランザクション
     @classmethod
-    # HOME画面を開いたときフレンド名・最終メッセージ・最終メッセージの時間を取得
     def get_all_friends(cls, uid):
         conn = db_pool.get_conn()
         try:
@@ -160,6 +162,7 @@ class Room:
         finally:
             db_pool.release(conn)
 
+    # ルームを論理削除トランザクション
     @classmethod
     def delete_room(cls, room_id):
         conn = db_pool.get_conn()
@@ -174,7 +177,7 @@ class Room:
         finally:
             db_pool.release(conn)
 
-    # 友達追加を選択したときの招待側の処理
+    # 友達追加トランザクション(招待側)
     @classmethod
     def add_room(cls, uid, room_id):
         conn = db_pool.get_conn()
@@ -210,6 +213,7 @@ class Room:
 
 
 class Message:
+    # メッセージ全件取得トランザクション
     def get_all_messages(cls, room_id):
         conn = db_pool.get_conn()
         try:
@@ -217,6 +221,8 @@ class Message:
                 sql = """
                         SELECT
                             u.name AS user_name,
+                            m.id,
+                            m.room_id,
                             m.message,
                             m.updated_at
                         FROM
@@ -242,7 +248,7 @@ class Message:
         finally:
             db_pool.release(conn)
 
-    # messagesにレコードを追加する処理
+    # 新規メッセージトランザクション
     @classmethod
     def add_message(cls, message_id, uid, room_id, message):
         conn = db_pool.get_conn()
@@ -258,14 +264,15 @@ class Message:
         finally:
             db_pool.release(conn)
 
+    # 最新メッセージの送信者取得トランザクション
     @classmethod
-    def last_sender(cls, room_id):
+    def latest_message(cls, room_id):
         conn = db_pool.get_conn()
         try:
             with conn.cursor() as cur:
                 # 今いてるルームの最後のメッセージの送信者を取得
                 sql = """
-                    SELECT uid
+                    SELECT id, uid, message, updated_at
                     FROM messages
                     WHERE room_id = %s
                     AND updated_at = (
@@ -276,7 +283,29 @@ class Message:
                     """
                 cur.execute(sql, (room_id, room_id))
                 user = cur.fetchone()
+                print(user)
                 return user
+        except pymysql.Error as e:
+            print(f'error: {e}')
+            abort(500)
+        finally:
+            db_pool.release(conn)
+
+    # メッセージ編集トランザクション
+    @classmethod
+    def edit_message(cls, message_id, edited_message):
+        conn = db_pool.get_conn()
+        try:
+            with conn.cursor() as cur:
+                # 今いてるルームの最後のメッセージの送信者を取得
+                sql = """
+                    UPDATE messages
+                    SET message = %s
+                    WHERE id = %s
+                """
+                cur.execute(sql, (edited_message, message_id))
+                conn.commit()
+                print('success')
         except pymysql.Error as e:
             print(f'error: {e}')
             abort(500)

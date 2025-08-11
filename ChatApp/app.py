@@ -3,6 +3,7 @@ from flask import (
         redirect,
         url_for,
         render_template,
+        request,
         flash,
         send_file
         )
@@ -198,7 +199,7 @@ def invite_qrcode(room_id):
 
 
 # ルームを論理削除
-@app.route('/room/delete/<room_id>', methods=['DELETE'])
+@app.route('/room/delete/<room_id>', methods=['POST'])
 @login_required
 def delete_room(room_id):
     Room.delete_room(room_id)
@@ -206,22 +207,26 @@ def delete_room(room_id):
 
 
 # メッセージ画面
-# ルーム内のメッセージを一覧表示
+# メッセージ一覧表示
 @app.route('/room/<room_id>/messages', methods=['GET'])
 @login_required
 def messages_view(room_id):
     form = MessageForm()
     uid = current_user.get_id()
     messages = Message.get_all_messages(uid, room_id)
+    latest_message = Message.latest_message(room_id)
+    print(latest_message)
     return render_template(
             'messages.html',
             form=form,
             room_id=room_id,
-            messages=messages
+            messages=messages,
+            uid=uid,
+            latest_message=latest_message
             )
 
 
-# ルーム内でフレンドにメッセージを送信する
+# メッセージ送信
 @app.route('/room/<room_id>/add/message', methods=['POST'])
 @login_required
 def add_message(room_id):
@@ -229,10 +234,9 @@ def add_message(room_id):
 
     # 入力内容がバリテーションチェックが通ったときの処理
     if form.validate_on_submit():
-        last_sender_uid = Message.last_sender(room_id)['uid']
         uid = current_user.get_id()
-        print(f'最後の送信者は{last_sender_uid}です。ログインユーザは{uid}です。')
-        if last_sender_uid != uid:
+        latest_message = Message.latest_message(room_id)
+        if latest_message.get('uid') != uid:
             message_id = generate()
             message = form.message.data
             Message.add_message(message_id, uid, room_id, message)
@@ -240,15 +244,22 @@ def add_message(room_id):
     return redirect(url_for('messages_view', room_id=room_id, form=form))
 
 
-# ルーム内でフレンドに送信したメッセージを編集する
-@app.route('/messages/edit/<message_id>', methods=['POST'])
+# メッセージ編集
+@app.route('/room/<room_id>/message/edit/<message_id>', methods=['POST'])
 @login_required
-def edit_message():
-    return redirect(url_for('messages_view'))
+def edit_message(room_id, message_id):
+    form = MessageForm()
+    uid = current_user.get_id()
+    latest_message = Message.latest_message(room_id)
+    if latest_message.get('uid') == uid:
+        edit_message = request.form.get('edit_message')
+        Message.edit_message(message_id, edit_message)
+        return redirect(url_for('messages_view', room_id=room_id, form=form))
+    return redirect(url_for('messages_view', room_id=room_id, form=form))
 
 
 # ルーム内でフレンドに送信したメッセージを削除する
-@app.route('/messages/delete/<message_id>', methods=['POST'])
+@app.route('/message/delete/<message_id>', methods=['POST'])
 @login_required
 def delete_message():
     return redirect(url_for('messages_view'))
