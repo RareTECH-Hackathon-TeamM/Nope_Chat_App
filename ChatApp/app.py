@@ -259,10 +259,16 @@ def edit_message(room_id, message_id):
 
 
 # ルーム内でフレンドに送信したメッセージを削除する
-@app.route('/message/delete/<message_id>', methods=['POST'])
+@app.route('/room/<room_id>/message/delete/<message_id>', methods=['POST'])
 @login_required
-def delete_message():
-    return redirect(url_for('messages_view'))
+def delete_message(room_id, message_id):
+    form = MessageForm()
+    uid = current_user.get_id()
+    latest_message = Message.latest_message(room_id)
+    if latest_message.get('uid') == uid:
+        Message.delete_message(message_id)
+        return redirect(url_for('messages_view', room_id=room_id, form=form))
+    return redirect(url_for('messages_view', room_id=room_id, form=form))
 
 
 if __name__ == '__main__':
