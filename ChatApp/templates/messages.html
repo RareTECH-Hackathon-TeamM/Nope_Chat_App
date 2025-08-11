@@ -11,9 +11,18 @@
   <div id="message-area" style="border: double 1px">
     {% for message in messages %}
     <div class="my-messages" style="border: double 1px">
-      <p>{{ message.user_name }}</p>
-      <p>{{ message.message }}</p>
-      <p>{{ message.updated_at }}</p>
+      {% if latest_message.id == message.id %}
+        <form method="POST" action="{{ url_for('edit_message', room_id=message.room_id, message_id=message.id) }}">
+          <p>{{ message.user_name }}</p>
+          <input type="text" id="edit_message" name=edit_message value="{{ message.message }}">
+          <p>{{ message.updated_at }}</p>
+          <input type="submit" value="edit">
+        </form>
+      {% else %}
+        <p>{{ message.user_name }}</p>
+        <p>{{ message.message }}</p>
+        <p>{{ message.updated_at }}</p>
+      {% endif %}
     </div>
     {% endfor %}
   </div>
