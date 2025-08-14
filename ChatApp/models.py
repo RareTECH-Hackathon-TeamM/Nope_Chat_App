@@ -114,6 +114,7 @@ class Room:
                             r.id AS room_id,
                             r.name AS room_name, -- DMではNULL
                             r.room_type, -- DMのみ
+                            r.is_available AS is_available,
                             u.name AS friend_name,
                             m.message AS latest_message, -- 最新のメッセージ内容
                             m.created_at AS latest_time -- メッセージの時間
@@ -162,7 +163,7 @@ class Room:
         finally:
             db_pool.release(conn)
 
-    # ルームを論理削除トランザクション
+    # ルーム論理削除トランザクション
     @classmethod
     def delete_room(cls, room_id):
         conn = db_pool.get_conn()
@@ -283,7 +284,7 @@ class Message:
                     """
                 cur.execute(sql, (room_id, room_id))
                 user = cur.fetchone()
-                print(user)
+                print(f'[送信者取得トランザクション]:{user}')
                 return user
         except pymysql.Error as e:
             print(f'error: {e}')
@@ -304,6 +305,22 @@ class Message:
                     WHERE id = %s
                 """
                 cur.execute(sql, (edited_message, message_id))
+                conn.commit()
+                print('success')
+        except pymysql.Error as e:
+            print(f'error: {e}')
+            abort(500)
+        finally:
+            db_pool.release(conn)
+
+    # メッセージ削除トランザクション
+    @classmethod
+    def delete_message(cls, message_id):
+        conn = db_pool.get_conn()
+        try:
+            with conn.cursor() as cur:
+                sql = "DELETE FROM messages WHERE id = %s"
+                cur.execute(sql, (message_id))
                 conn.commit()
                 print('success')
         except pymysql.Error as e:

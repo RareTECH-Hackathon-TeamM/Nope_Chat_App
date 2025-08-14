@@ -48,9 +48,9 @@ bcrypt = Bcrypt(app)
 
 @login_manager.user_loader
 def load_user(uid):
-    # print(f'[load_user] uid: {uid}')
+    print(f'[load_user] uid: {uid}')
     user = User.get_by_id(uid)
-    # print(f'[load_user] user: {user}')
+    print(f'[load_user] user: {user}')
     return user
 
 
@@ -136,6 +136,7 @@ def home_view():
     form = SearchForm()
     uid = current_user.get_id()
     rooms = Room.get_all_friends(uid)
+    # 1か月以上やり取りがない友達を論理削除
     return render_template('home.html',
                            form=form,
                            rooms=rooms
@@ -214,8 +215,12 @@ def messages_view(room_id):
     form = MessageForm()
     uid = current_user.get_id()
     messages = Message.get_all_messages(uid, room_id)
+    print(f'[メッセージ一覧表示(messages)]:{messages}')
+    """
+    下記のlatest_massageがNoneになる 8/14
+    """
     latest_message = Message.latest_message(room_id)
-    print(latest_message)
+    print(f'[メッセージ一覧表示]:{latest_message}')
     return render_template(
             'messages.html',
             form=form,
@@ -235,8 +240,14 @@ def add_message(room_id):
     # 入力内容がバリテーションチェックが通ったときの処理
     if form.validate_on_submit():
         uid = current_user.get_id()
+        print(uid)
+        print(f'[メッセージ送信(current_user)]:{uid}')
         latest_message = Message.latest_message(room_id)
-        if latest_message.get('uid') != uid:
+        print(f'[メッセージ送信(latest_message.uid)]:{latest_message}')
+        """
+        ここにメッセージ件数0件でlatest_messageがNoneの時の処理を追加
+        """
+        if latest_message is None or latest_message.get('uid') != uid:
             message_id = generate()
             message = form.message.data
             Message.add_message(message_id, uid, room_id, message)
@@ -259,10 +270,16 @@ def edit_message(room_id, message_id):
 
 
 # ルーム内でフレンドに送信したメッセージを削除する
-@app.route('/message/delete/<message_id>', methods=['POST'])
+@app.route('/room/<room_id>/message/delete/<message_id>', methods=['POST'])
 @login_required
-def delete_message():
-    return redirect(url_for('messages_view'))
+def delete_message(room_id, message_id):
+    form = MessageForm()
+    uid = current_user.get_id()
+    latest_message = Message.latest_message(room_id)
+    if latest_message.get('uid') == uid:
+        Message.delete_message(message_id)
+        return redirect(url_for('messages_view', room_id=room_id, form=form))
+    return redirect(url_for('messages_view', room_id=room_id, form=form))
 
 
 if __name__ == '__main__':
