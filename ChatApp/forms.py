@@ -13,11 +13,11 @@ from wtforms.validators import (
 
 
 class LoginForm(FlaskForm):
-    username = StringField('アカウント名', validators=[
+    email = StringField('email', validators=[
         DataRequired(message='アカウント名を入力してください'),
     ])
 
-    password = PasswordField('パスワード', validators=[
+    password = PasswordField('password', validators=[
         DataRequired(message='パスワードを入力してください'),
     ])
 
