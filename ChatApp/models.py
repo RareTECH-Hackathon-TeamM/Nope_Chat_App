@@ -58,14 +58,14 @@ class User(UserMixin):
         finally:
             db_pool.release(conn)
 
-    # 登録ユーザ判別用トランザクション(ログイン時)
+    # 登録ユーザ判別用トランザクション(新規登録・ログイン時)
     @classmethod
-    def find_username(cls, name):
+    def find_email(cls, email):
         conn = db_pool.get_conn()
         try:
             with conn.cursor() as cur:
-                sql = "SELECT * FROM users WHERE name=%s;"
-                cur.execute(sql, (name,))
+                sql = "SELECT * FROM users WHERE email=%s;"
+                cur.execute(sql, (email,))
                 row = cur.fetchone()
                 if row:
                     return cls(
@@ -76,22 +76,6 @@ class User(UserMixin):
                             )
                 else:
                     return None
-        except pymysql.Error as e:
-            print(f'error: {e}')
-            abort(500)
-        finally:
-            db_pool.release(conn)
-
-    # 登録ユーザ判別用トランザクション(新規登録時)
-    @classmethod
-    def find_email(cls, email):
-        conn = db_pool.get_conn()
-        try:
-            with conn.cursor() as cur:
-                sql = "SELECT * FROM users WHERE email=%s;"
-                cur.execute(sql, (email,))
-                user = cur.fetchone()
-            return user
         except pymysql.Error as e:
             print(f'error: {e}')
             abort(500)

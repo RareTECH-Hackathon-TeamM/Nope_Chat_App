@@ -106,14 +106,16 @@ def login_view():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.find_username(form.username.data)
+        user = User.find_email(form.email.data)
         if not user:
             flash('このユーザーは存在しません')
         else:
-            if check_password_hash(
+            if not check_password_hash(
                             user.password,
                             form.password.data
                             ):
+                flash('パスワードが間違っています')
+            else:
                 login_user(user, remember=True)
                 return redirect(url_for('home_view'))
         return render_template('auth/login.html', form=form)
@@ -123,7 +125,6 @@ def login():
 @app.route('/logout', methods=['POST'])
 @login_required
 def logout():
-    # remove the uid from the session if it's there
     logout_user()
     return redirect(url_for('login'))
 
