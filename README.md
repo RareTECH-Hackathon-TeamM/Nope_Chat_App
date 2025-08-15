@@ -78,16 +78,16 @@ erDiagram
 		name VARCHAR(20)  ""  
 		room_type ENUM  ""
 		is_available BOOLEAN  
-		create_at TIMESTAMP  ""  
-		update_at TIMESTAMP  ""  
+		create_at DATETIME  ""  
+		update_at DATETIME  ""  
 	}
 	messages {
 		id VARCHAR(21) PK ""  
 		uid VARCHAR(36) FK ""  
 		room_id VARCHAR(10) FK ""  
 		message VARCHAR(100)  ""  
-		create_at TIMESTAMP  ""  
-		update_at TIMESTAMP  ""  
+		create_at DATETIME  ""  
+		update_at DATETIME  ""  
 	}
 	user_rooms {
 		uid VARCHAR(36) PK,FK ""  
