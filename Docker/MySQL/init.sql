@@ -71,8 +71,8 @@ CREATE TABLE messages (
     -- 100文字制限(アプリの仕様)
     message VARCHAR(100) NOT NULL,
     -- --------------------------------------------
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     -- --------------------------------------------
     FOREIGN KEY (uid) REFERENCES users(uid) ON DELETE CASCADE,
     FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE

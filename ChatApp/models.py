@@ -89,7 +89,7 @@ class User(UserMixin):
 class Room:
     # ルーム全件取得トランザクション
     @classmethod
-    def get_all_friends(cls, uid):
+    def get_all_rooms(cls, uid):
         conn = db_pool.get_conn()
         try:
             with conn.cursor() as cur:
@@ -209,6 +209,7 @@ class Message:
                             m.id,
                             m.room_id,
                             m.message,
+                            m.created_at,
                             m.updated_at
                         FROM
                             messages AS m
@@ -225,8 +226,9 @@ class Message:
                             m.updated_at;
                     """
                 cur.execute(sql, (room_id,))
-                rooms = cur.fetchall()
-                return rooms
+                messages = cur.fetchall()
+                print(f'[get_all_messages(models): {messages}]')
+                return messages
         except pymysql.Error as e:
             print(f'error: {e}')
             abort(500)
