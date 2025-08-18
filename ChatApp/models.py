@@ -156,6 +156,7 @@ class Room:
                 sql = "UPDATE rooms SET is_available = 0 WHERE id = %s"
                 cur.execute(sql, (room_id,))
                 conn.commit()
+                print('[DELETE]')
         except pymysql.Error as e:
             print(f'error: {e}')
             abort(500)

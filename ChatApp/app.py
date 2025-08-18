@@ -49,9 +49,9 @@ bcrypt = Bcrypt(app)
 
 @login_manager.user_loader
 def load_user(uid):
-    print(f'[load_user] uid: {uid}')
+    # print(f'[load_user] uid: {uid}')
     user = User.get_by_id(uid)
-    print(f'[load_user] user: {user}')
+    # print(f'[load_user] user: {user}')
     return user
 
 
@@ -140,22 +140,21 @@ def home_view():
     rooms = Room.get_all_rooms(uid)
 
     # 友達自動削除
-    latest_times = [latest_time.get('latest_time') for latest_time in rooms]
-
-    # 友達が0のときの処理
-    if latest_times[0] is not None:
+    if rooms:
         for room in rooms:
-            today = datetime.today()
-            one_month_later = room.get("latest_time") + relativedelta(months=1)
-            month_difference = one_month_later <= today
+            if room.get("latest_time") is not None:
+                today = datetime.today()
+                one_month_later = room.get("latest_time") + relativedelta(months=1)
 
-            # 1か月以上やり取りがない友達を論理削除
-            if month_difference:
-                Room.delete_room(room.get('room_id'))
-                return redirect('home_view',
-                                form=form,
-                                rooms=rooms
-                                )
+                month_difference = one_month_later < today
+                # 1か月以上やり取りがない友達を論理削除
+                if month_difference:
+                    Room.delete_room(room.get('room_id'))
+                    return render_template(
+                                        'home.html',
+                                        form=form,
+                                        rooms=rooms
+                                        )
 
     return render_template('home.html',
                            form=form,
@@ -235,9 +234,7 @@ def messages_view(room_id):
     form = MessageForm()
     uid = current_user.get_id()
     messages = Message.get_all_messages(uid, room_id)
-    print(f'[メッセージ一覧表示(messages)]:{messages}')
     latest_message = Message.latest_message(room_id)
-    print(f'[メッセージ一覧表示]:{latest_message}')
     return render_template(
             'messages.html',
             form=form,
@@ -257,10 +254,7 @@ def add_message(room_id):
     # 入力内容がバリテーションチェックが通ったときの処理
     if form.validate_on_submit():
         uid = current_user.get_id()
-        print(uid)
-        print(f'[メッセージ送信(current_user)]:{uid}')
         latest_message = Message.latest_message(room_id)
-        print(f'[メッセージ送信(latest_message.uid)]:{latest_message}')
         if latest_message is None or latest_message.get('uid') != uid:
             message_id = generate()
             message = form.message.data
