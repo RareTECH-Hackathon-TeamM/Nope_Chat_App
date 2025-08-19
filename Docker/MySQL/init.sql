@@ -99,7 +99,7 @@ VALUES
      '$2b$12$ZyM9aCeZgFllP5llwPCc9exgJ4U8hHvhmLRD5CIyM9YzK4/WgR35a');
 
 INSERT INTO rooms(id, name, room_type, created_at, updated_at) VALUES
-  ('WMDEceZq8G', NULL, 'dm', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),     -- id=1
+  ('WMDEceZq8G', NULL, 'dm', '2020-09-17 15:30:00', '2025-08-10 00:00:00'),     -- id=1
   ('QyGGMfNp7s', NULL, 'dm', '2019-09-17 15:30:00', '2020-01-01 00:00:00');   -- id=2
 
 -- ルーム1: テスト, テスト2
@@ -113,11 +113,11 @@ INSERT INTO user_rooms(uid, room_id) VALUES
   ('970af84c-dd40-47ff-af23-282b72b7ccab', 'QyGGMfNp7s');
 
 -- ルーム1: テスト <-> テスト2
-INSERT INTO messages(id, uid, room_id, message) VALUES
-  ('ky3axowgi6QHAL6FZ33Y3', '970af84c-dd40-47ff-af23-282b72b7cca8', 'WMDEceZq8G', 'こんにちは、テスト2さん'),
-  ('p00mHjG24JnwyEY1Rqw65', '970af84c-dd40-47ff-af23-282b72b7cca9', 'WMDEceZq8G', 'こんにちは、テストさん！元気ですか？'),
-  ('ShaU31ygO0mU5kz5WrICZ', '970af84c-dd40-47ff-af23-282b72b7cca8', 'WMDEceZq8G', 'テスト2さん、元気です！テスト2さんは？'),
-  ('gpPpD0arW2LNGihUX6uaA', '970af84c-dd40-47ff-af23-282b72b7cca9', 'WMDEceZq8G', '元気です！');
+INSERT INTO messages(id, uid, room_id, message, created_at, updated_at) VALUES
+  ('ky3axowgi6QHAL6FZ33Y3', '970af84c-dd40-47ff-af23-282b72b7cca8', 'WMDEceZq8G', 'こんにちは、テスト2さん', '2020-09-17 15:31:00', '2020-09-17 15:31:00'),
+  ('p00mHjG24JnwyEY1Rqw65', '970af84c-dd40-47ff-af23-282b72b7cca9', 'WMDEceZq8G', 'こんにちは、テストさん！元気ですか？', '2021-09-17 15:31:00', '2021-09-17 15:31:00'),
+  ('ShaU31ygO0mU5kz5WrICZ', '970af84c-dd40-47ff-af23-282b72b7cca8', 'WMDEceZq8G', 'テスト2さん、元気です！テスト2さんは？', '2022-09-17 15:31:00', '2022-09-17 15:31:00'),
+  ('gpPpD0arW2LNGihUX6uaA', '970af84c-dd40-47ff-af23-282b72b7cca9', 'WMDEceZq8G', '元気です！', '2025-08-10 00:00:00', '2025-08-10 00:00:00');
 
 -- ルーム2: テスト <-> テスト4
 INSERT INTO messages(id, uid, room_id, message, created_at, updated_at) VALUES
