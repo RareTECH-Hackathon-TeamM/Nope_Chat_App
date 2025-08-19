@@ -16,6 +16,7 @@
       <button type="submit">ログアウト</button>
     </form>
   </header>
+  <h1>room</h1>
   <h2>ルーム一覧</h2>
   <div id="rooms-area" style="border: double 1px">
     {% for room in rooms %}
@@ -41,7 +42,9 @@
         <span style="color: red;">[{{ error }}]</span>
       {% endfor %}
     </p>
-    <p>{{ form.submit() }}</p>
+    <form method="POST" action="{{ url_for('home') }}">
+      <p>{{ form.submit() }}</p>
+    </form>
     {% with messages = get_flashed_messages() %} {% if messages %}
     <ul class="flashes">
       {% for message in messages %}

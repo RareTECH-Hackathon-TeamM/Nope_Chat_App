@@ -59,7 +59,7 @@ def load_user(uid):
 @app.route('/')
 def index():
     if current_user.is_authenticated:
-        return redirect(url_for('home_view'))
+        return redirect(url_for('delete_friend'))
     return redirect(url_for('login_view'))
 
 
@@ -138,35 +138,65 @@ def home_view():
     form = SearchForm()
     uid = current_user.get_id()
     rooms = Room.get_all_rooms(uid)
-
-    # 友達自動削除
-    if rooms:
-        for room in rooms:
-            if room.get("latest_time") is not None:
-                today = datetime.today()
-                one_month_later = room.get("latest_time") + relativedelta(months=1)
-
-                month_difference = one_month_later < today
-                # 1か月以上やり取りがない友達を論理削除
-                if month_difference:
-                    Room.delete_room(room.get('room_id'))
-                    return render_template(
-                                        'home.html',
-                                        form=form,
-                                        rooms=rooms
-                                        )
-
-    return render_template('home.html',
-                           form=form,
-                           rooms=rooms
-                           )
+    return render_template(
+                        'home.html',
+                        form=form,
+                        rooms=rooms
+                        )
 
 
 # 既存のルームの絞込検索
 @app.route('/home', methods=['POST'])
 @login_required
 def home():
-    pass
+    form = SearchForm()
+    uid = current_user.get_id()
+    rooms = Room.get_all_rooms(uid)
+    filter_keyword = form.search_friend.data
+    filter_rooms = []
+    # print(f'[FILTER(ROOMS)]: {rooms}')
+    if rooms:
+        if not filter_keyword:
+            return redirect(url_for('home_view'))
+        else:
+            for room in rooms:
+                # print(f'[ROOM]: {room}')
+                friend_name = room.get('friend_name')
+                if filter_keyword in friend_name:
+                    filter_rooms.append(room)
+                else:
+                    pass
+            else:
+                # print(f'[FILTER(FILTER_ROOMS)]: {filter_rooms}')
+                return render_template('home.html',
+                                       form=form,
+                                       rooms=filter_rooms)
+    return redirect(url_for('home_view'))
+
+
+# 友達自動削除
+@app.route('/room/delete')
+@login_required
+def delete_friend():
+    uid = current_user.get_id()
+    rooms = Room.get_all_rooms(uid)
+
+    # 友達自動削除
+    if rooms:
+        for room in rooms:
+            try:
+                today = datetime.today()
+                one_month_later = room.get("latest_time") + relativedelta(months=1)
+                month_difference = one_month_later < today
+                # 1か月以上やり取りがない友達を論理削除
+                if month_difference:
+                    Room.delete_room(room.get('room_id'))
+                else:
+                    pass
+            except Exception as e:
+                print('[ERROR]:{e}')
+
+    return redirect(url_for('home_view'))
 
 
 # 友達を追加する
@@ -218,7 +248,7 @@ def invite_qrcode(room_id):
     return send_file(buf, mimetype='image/png')
 
 
-# ルームを論理削除
+# ルームを削除ボタンで論理削除
 @app.route('/room/delete/<room_id>', methods=['POST'])
 @login_required
 def delete_room(room_id):

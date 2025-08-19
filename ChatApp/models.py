@@ -228,7 +228,7 @@ class Message:
                     """
                 cur.execute(sql, (room_id,))
                 messages = cur.fetchall()
-                print(f'[get_all_messages(models): {messages}]')
+                # print(f'[get_all_messages(models): {messages}]')
                 return messages
         except pymysql.Error as e:
             print(f'error: {e}')
@@ -271,7 +271,7 @@ class Message:
                     """
                 cur.execute(sql, (room_id, room_id))
                 user = cur.fetchone()
-                print(f'[送信者取得トランザクション]:{user}')
+                # print(f'[送信者取得トランザクション]:{user}')
                 return user
         except pymysql.Error as e:
             print(f'error: {e}')
@@ -309,7 +309,7 @@ class Message:
                 sql = "DELETE FROM messages WHERE id = %s"
                 cur.execute(sql, (message_id))
                 conn.commit()
-                print('success')
+                print('[DELETE]')
         except pymysql.Error as e:
             print(f'error: {e}')
             abort(500)

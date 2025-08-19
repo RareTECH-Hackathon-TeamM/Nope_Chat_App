@@ -52,9 +52,7 @@ class SignupForm(FlaskForm):
 
 
 class SearchForm(FlaskForm):
-    search_friend = StringField('検索キーワード', validators=[
-        DataRequired('キーワードを入力してください'),
-    ])
+    search_friend = StringField('検索キーワード')
     submit = SubmitField('検索')
 
 
