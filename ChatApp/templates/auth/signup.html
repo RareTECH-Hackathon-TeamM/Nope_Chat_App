@@ -1,11 +1,68 @@
 {% extends "base.html" %}
 {% block title %}サインアップ - Nope App{% endblock %}
 {% block content %}
-<div class="signup-container">
+<!-- <div class="signup-container"> -->
+<form action="{{ url_for('signup') }}" method="POST">
+    {{ form.hidden_tag() }}
+    <div>
+        <div>
+            <p>
+                {{ form.username.label }}
+            </p>
+            <div>
+                {{ form.username(size=32) }}
+            </div>
+            {% for error in form.username.errors %}
+            <p>
+                [{{ error }}]
+            </p>
+            {% endfor %}
+        </div>
+        <div>
+            <p>
+                {{ form.email.label }}
+            </p>
+            <div>
+                {{ form.email(size=32) }}
+            </div>
+            {% for error in form.email.errors %}
+            <p>
+                [{{ error }}]
+            </p>
+            {% endfor %}
+        </div>
+        <div>
+            <p>
+                {{ form.password.label }}
+            </p>
+            <div>
+                {{ form.password(size=32) }}
+            </div>
+            {% for error in form.password.errors %}
+            <p>
+                [{{ error }}]
+            </p>
+            {% endfor %}
+        </div>
+        <div>
+            <p>
+                {{ form.confirm.label }}
+            </p>
+            <div>
+                {{ form.confirm(size=32) }}
+            </div>
+            {% for error in form.confirm.errors %}
+            <p>
+                [{{ error }}]
+            </p>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.submit() }}
+        </div>
+    </div>
 
-    <form action="{{ url_for('register') }}" method="POST" novalidate>
-        {{ form.hidden_tag() }}
-        <label for="account_name">Account Name</label>
+    <!-- <label for="account_name">Account Name</label>
         <input type="text" id="account_name" name="account_name" placeholder="Account Name" required
             value="{{ form.account_name.data or '' }}" oninvalid="this.setCustomValidity('アカウント名を入力してください')"
             oninput="this.setCustomValidity('')">
@@ -18,12 +75,12 @@
         <label for="password_confirm">Password (確認)</label>
         <input type="password" id="password_confirm" name="password_confirm" placeholder="Password (確認)" required
             oninvalid="this.setCustomValidity('確認用パスワードを入力してください')" oninput="this.setCustomValidity('')">
-        <button type="submit">📝 サインアップ</button>
-    </form>
-    {% if error %}
+        <button type="submit">📝 サインアップ</button> -->
+</form>
+<a href="{{ url_for('login') }}">戻る</a>
+<!-- {% if error %}
     <div class="error-message" aria-live="polite">
         {{ error }}
     </div>
-    {% endif %}
-</div>
+    {% endif %} -->
 {% endblock %}
