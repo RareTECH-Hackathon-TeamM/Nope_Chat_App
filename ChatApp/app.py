@@ -4,11 +4,9 @@ from flask import (
         url_for,
         render_template,
         request,
-        session,
-        flash
+        flash,
+        send_file
         )
-from forms import SignupForm, LoginForm
-
 from flask_login import (
         LoginManager,
         login_user,
@@ -21,10 +19,19 @@ from flask_bcrypt import (
         generate_password_hash,
         check_password_hash
         )
-from datetime import timedelta
-import uuid
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+from forms import (SignupForm,
+                   LoginForm,
+                   SearchForm,
+                   MessageForm
+                   )
+import io
+from models import User, Room, Message
+from nanoid import generate
 import os
-from models import User
+import qrcode
+import uuid
 
 SESSION_DAYS = 7
 
@@ -42,9 +49,9 @@ bcrypt = Bcrypt(app)
 
 @login_manager.user_loader
 def load_user(uid):
-    print(f'[load_user] uid: {uid}')
+    # print(f'[load_user] uid: {uid}')
     user = User.get_by_id(uid)
-    print(f'[load_user] user: {user}')
+    # print(f'[load_user] user: {user}')
     return user
 
 
@@ -52,7 +59,7 @@ def load_user(uid):
 @app.route('/')
 def index():
     if current_user.is_authenticated:
-        return redirect(url_for('home_view'))
+        return redirect(url_for('delete_friend'))
     return redirect(url_for('login_view'))
 
 
@@ -100,14 +107,16 @@ def login_view():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.find_username(form.username.data)
+        user = User.find_email(form.email.data)
         if not user:
             flash('このユーザーは存在しません')
         else:
-            if user and check_password_hash(
+            if not check_password_hash(
                             user.password,
                             form.password.data
                             ):
+                flash('パスワードが間違っています')
+            else:
                 login_user(user, remember=True)
                 return redirect(url_for('home_view'))
         return render_template('auth/login.html', form=form)
@@ -117,7 +126,6 @@ def login():
 @app.route('/logout', methods=['POST'])
 @login_required
 def logout():
-    # remove the uid from the session if it's there
     logout_user()
     return redirect(url_for('login'))
 
@@ -127,50 +135,189 @@ def logout():
 @app.route('/home', methods=['GET'])
 @login_required
 def home_view():
-    return render_template('home.html')
+    form = SearchForm()
+    uid = current_user.get_id()
+    rooms = Room.get_all_rooms(uid)
+    return render_template(
+                        'home.html',
+                        form=form,
+                        rooms=rooms
+                        )
 
 
-# 友達を追加する(友達 == ルーム)
-@app.route('/friend/add', methods=['POST'])
+# 既存のルームの絞込検索
+@app.route('/home', methods=['POST'])
 @login_required
-def add_friend():
+def home():
+    form = SearchForm()
+    uid = current_user.get_id()
+    rooms = Room.get_all_rooms(uid)
+    filter_keyword = form.search_friend.data
+    filter_rooms = []
+    # print(f'[FILTER(ROOMS)]: {rooms}')
+    if rooms:
+        if not filter_keyword:
+            return redirect(url_for('home_view'))
+        else:
+            for room in rooms:
+                # print(f'[ROOM]: {room}')
+                friend_name = room.get('friend_name')
+                if filter_keyword in friend_name:
+                    filter_rooms.append(room)
+                else:
+                    pass
+            else:
+                # print(f'[FILTER(FILTER_ROOMS)]: {filter_rooms}')
+                return render_template('home.html',
+                                       form=form,
+                                       rooms=filter_rooms)
     return redirect(url_for('home_view'))
 
 
-# 友達を削除する(友達 == ルーム)
-@app.route('/friend/delete/<int:room_id>', methods=['POST'])
+# 友達自動削除
+@app.route('/room/delete')
 @login_required
 def delete_friend():
+    uid = current_user.get_id()
+    rooms = Room.get_all_rooms(uid)
+
+    # 友達自動削除
+    if rooms:
+        for room in rooms:
+            try:
+                today = datetime.today()
+                one_month_later = room.get("latest_time") + relativedelta(months=1)
+                month_difference = one_month_later < today
+                # 1か月以上やり取りがない友達を論理削除
+                if month_difference:
+                    Room.delete_room(room.get('room_id'))
+                else:
+                    pass
+            except Exception as e:
+                print('[ERROR]:{e}')
+
+    return redirect(url_for('home_view'))
+
+
+# 友達を追加する
+@app.route('/room/add', methods=['POST'])
+@login_required
+def add_friend():
+    uid = current_user.get_id()
+    room_id = generate(size=10)
+    Room.add_room(uid, room_id)
+    return redirect(url_for('invite_sender_view', room_id=room_id))
+
+
+# QRコードを表示する画面に遷移
+@app.route('/invite/sender/<room_id>', methods=['GET'])
+@login_required
+def invite_sender_view(room_id):
+    return render_template('invite_sender.html', room_id=room_id)
+
+
+# QRコード読み取り後遷移する画面
+@app.route('/invite/receiver/<room_id>', methods=['GET'])
+@login_required
+def invite_receiver_view(room_id):
+    return render_template('invite_receiver.html', room_id=room_id)
+
+
+# 友達追加したときの処理
+@app.route('/invite/receiver/<room_id>', methods=['POST'])
+@login_required
+def invite_receiver(room_id):
+    uid = current_user.get_id()
+    Room.add_friend(uid, room_id)
+    return redirect(url_for('home_view'))
+
+
+# QRコードを返す
+@app.route('/invite/qrcode/<room_id>')
+@login_required
+def invite_qrcode(room_id):
+    invite_url = url_for(
+            'invite_receiver_view',
+            room_id=room_id,
+            _external=True
+            )
+    qr = qrcode.make(invite_url)
+    buf = io.BytesIO()
+    qr.save(buf, format='PNG')
+    buf.seek(0)
+    return send_file(buf, mimetype='image/png')
+
+
+# ルームを削除ボタンで論理削除
+@app.route('/room/delete/<room_id>', methods=['POST'])
+@login_required
+def delete_room(room_id):
+    Room.delete_room(room_id)
     return redirect(url_for('home_view'))
 
 
 # メッセージ画面
-# ルーム内のメッセージを一覧表示
-@app.route('/room/<int:room_id>/message', methods=['GET'])
+# メッセージ一覧表示
+@app.route('/room/<room_id>/messages', methods=['GET'])
 @login_required
-def messages_view():
-    return render_template('messages.html')
+def messages_view(room_id):
+    form = MessageForm()
+    uid = current_user.get_id()
+    messages = Message.get_all_messages(uid, room_id)
+    latest_message = Message.latest_message(room_id)
+    return render_template(
+            'messages.html',
+            form=form,
+            room_id=room_id,
+            messages=messages,
+            uid=uid,
+            latest_message=latest_message
+            )
 
 
-# ルーム内でフレンドにメッセージを送信する
-@app.route('/room/<int:room_id>/add/message', methods=['POST'])
+# メッセージ送信
+@app.route('/room/<room_id>/add/message', methods=['POST'])
 @login_required
-def add_message():
-    return redirect(url_for('messages_view'))
+def add_message(room_id):
+    form = MessageForm()
+
+    # 入力内容がバリテーションチェックが通ったときの処理
+    if form.validate_on_submit():
+        uid = current_user.get_id()
+        latest_message = Message.latest_message(room_id)
+        if latest_message is None or latest_message.get('uid') != uid:
+            message_id = generate()
+            message = form.message.data
+            Message.add_message(message_id, uid, room_id, message)
+            return redirect(url_for('messages_view', room_id=room_id))
+    return redirect(url_for('messages_view', room_id=room_id, form=form))
 
 
-# ルーム内でフレンドに送信したメッセージを編集する
-@app.route('/messages/edit/<int:message_id>', methods=['POST'])
+# メッセージ編集
+@app.route('/room/<room_id>/message/edit/<message_id>', methods=['POST'])
 @login_required
-def edit_message():
-    return redirect(url_for('messages_view'))
+def edit_message(room_id, message_id):
+    form = MessageForm()
+    uid = current_user.get_id()
+    latest_message = Message.latest_message(room_id)
+    if latest_message.get('uid') == uid:
+        edit_message = request.form.get('edit_message')
+        Message.edit_message(message_id, edit_message)
+        return redirect(url_for('messages_view', room_id=room_id, form=form))
+    return redirect(url_for('messages_view', room_id=room_id, form=form))
 
 
 # ルーム内でフレンドに送信したメッセージを削除する
-@app.route('/messages/delete/<int:message_id>', methods=['POST'])
+@app.route('/room/<room_id>/message/delete/<message_id>', methods=['POST'])
 @login_required
-def delete_message():
-    return redirect(url_for('messages_view'))
+def delete_message(room_id, message_id):
+    form = MessageForm()
+    uid = current_user.get_id()
+    latest_message = Message.latest_message(room_id)
+    if latest_message.get('uid') == uid:
+        Message.delete_message(message_id)
+        return redirect(url_for('messages_view', room_id=room_id, form=form))
+    return redirect(url_for('messages_view', room_id=room_id, form=form))
 
 
 if __name__ == '__main__':

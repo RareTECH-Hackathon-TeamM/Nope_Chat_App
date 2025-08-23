@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang-ja>
+<head>
+  <meta charset="utf=8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="main.js"></script>
+  <title>友達登録</title>
+</head>
+<body>
+  <form method="POST" action="{{ url_for('invite_receiver', room_id=room_id) }}">
+    <button type="submit">友達追加</button>
+  </form>
+  <a href="{{ url_for('home_view') }}">戻る</a>
+</body>
+</html>

@@ -1,35 +1,29 @@
-
 {% extends "base.html" %}
 {% block title %}サインアップ - Nope App{% endblock %}
 {% block content %}
-    <div class="signup-container">
-       
-        <form action="{{ url_for('register') }}" method="POST" novalidate>
-            {{ form.hidden_tag() }}
-            <label for="account_name">Account Name</label>
-            <input type="text" id="account_name" name="account_name" placeholder="Account Name" required
-                   value="{{ form.account_name.data or '' }}"
-                   oninvalid="this.setCustomValidity('アカウント名を入力してください')"
-                   oninput="this.setCustomValidity('')">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Email" required
-                   value="{{ form.email.data or '' }}"
-                   oninvalid="this.setCustomValidity('メールアドレスを入力してください')"
-                   oninput="this.setCustomValidity('')">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Password" required
-                   oninvalid="this.setCustomValidity('パスワードを入力してください')"
-                   oninput="this.setCustomValidity('')">
-            <label for="password_confirm">Password (確認)</label>
-            <input type="password" id="password_confirm" name="password_confirm" placeholder="Password (確認)" required
-                   oninvalid="this.setCustomValidity('確認用パスワードを入力してください')"
-                   oninput="this.setCustomValidity('')">
-            <button type="submit">📝 サインアップ</button>
-        </form>
-        {% if error %}
-            <div class="error-message" aria-live="polite">
-                {{ error }}
-            </div>
-        {% endif %}
+<div class="signup-container">
+
+    <form action="{{ url_for('register') }}" method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <label for="account_name">Account Name</label>
+        <input type="text" id="account_name" name="account_name" placeholder="Account Name" required
+            value="{{ form.account_name.data or '' }}" oninvalid="this.setCustomValidity('アカウント名を入力してください')"
+            oninput="this.setCustomValidity('')">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Email" required value="{{ form.email.data or '' }}"
+            oninvalid="this.setCustomValidity('メールアドレスを入力してください')" oninput="this.setCustomValidity('')">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Password" required
+            oninvalid="this.setCustomValidity('パスワードを入力してください')" oninput="this.setCustomValidity('')">
+        <label for="password_confirm">Password (確認)</label>
+        <input type="password" id="password_confirm" name="password_confirm" placeholder="Password (確認)" required
+            oninvalid="this.setCustomValidity('確認用パスワードを入力してください')" oninput="this.setCustomValidity('')">
+        <button type="submit">📝 サインアップ</button>
+    </form>
+    {% if error %}
+    <div class="error-message" aria-live="polite">
+        {{ error }}
     </div>
+    {% endif %}
+</div>
 {% endblock %}

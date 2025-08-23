@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang=ja>
+<head>
+  <meta charset="utf=8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="main.js"></script>
+  <title>友達登録</title>
+</head>
+<body>
+  <h3>招待QRコード</h3>
+  <img src="{{ url_for('invite_qrcode', room_id=room_id) }}" alt="QRコード">
+  <a href="{{ url_for('home_view') }}">戻る</a>
+</body>
+</html>
