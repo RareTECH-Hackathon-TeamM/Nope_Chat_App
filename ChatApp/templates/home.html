@@ -1,21 +1,67 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Rooms</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+  <link rel="stylesheet" href="../static/home.css">
+
+  <title>ルーム</title>
 </head>
 <body>
-    <h2>Chat Rooms</h2>
-    <ul>
-        <li>@Yamachan 今日</li>
-        <li>こんにちは</li>
-        <li>@NoOne 今日</li>
-        <li>Hi there</li>
-        <li>@Kaito 1日前</li>
-        <li>元気？</li>
-        <li>@Mentor 2日前</li>
-        <li>学習の進み具合はどうですか？...</li>
-    </ul>
+  <header>
+    <div class="hamburger-menu" id="hamburger-menu" role="button" aria-label="メニューを開く" tabindex="0">
+      <div class="hamburger-line"></div>
+      <div class="hamburger-line"></div>
+      <div class="hamburger-line"></div>
+    </div>
+    <nav class="nav-menu" id="nav-menu">
+      <form method="POST" action="{{ url_for('add_friend') }}">
+        <button type="submit" aria-label="友達を追加する">友達追加</button>
+      </form>
+      <form method="POST" action="{{ url_for('logout') }}">
+        <button type="submit" aria-label="ログアウトする">ログアウト</button>
+      </form>
+    </nav>
+  </header>
+  <h2>ルーム</h2>
+  <div id="rooms-area" class="rooms-area">
+    {% for room in rooms %}
+    <div class="my-rooms">
+      <p>{{ room.friend_name }}</p>
+      <p>{{ room.latest_message }}</p>
+      <p>{{ room.latest_time }}</p>
+      <form method="GET" action="{{ url_for('messages_view', room_id=room.room_id) }}">
+        <input type="submit" value="open">
+      </form>
+      <form method="POST" action="{{ url_for('delete_room', room_id=room.room_id) }}">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="submit" value="delete">
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  <form method="POST" action="{{ url_for('search_friend') }}">
+    {{ form.hidden_tag() }}
+    <p>
+      {{ form.search_friend.label }}
+      {{ form.search_friend(id="search_friend", size=32) }}<br>
+      {% for error in form.search_friend.errors %}
+        <span style="color: red;">{{ error }}</span>
+      {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+  </form>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="flashes">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  <script defer src="{{ url_for('static', filename='main.js') }}"></script>
+  <script defer src="../static/main.js"></script>
 </body>
 </html>
