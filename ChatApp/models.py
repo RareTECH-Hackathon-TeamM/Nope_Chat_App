@@ -208,6 +208,7 @@ class Message:
                         SELECT
                             u.name AS user_name,
                             m.id,
+                            m.uid,
                             m.room_id,
                             m.message,
                             m.created_at,

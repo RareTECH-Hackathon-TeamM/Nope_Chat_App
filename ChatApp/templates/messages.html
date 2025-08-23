@@ -3,46 +3,65 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <script src="main.js"></script>
-  <title>メッセージ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/messages.css') }}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.js"></script>
+  <script src="{{ url_for('static', filename='js/edit_message.js') }}"></script>
+  <title>messages</title>
 </head>
 <body>
-  <div id="message-area" style="border: double 1px">
-    {% for message in messages %}
-    <div class="my-messages" style="border: double 1px">
-      {% if latest_message.uid == uid and latest_message.id == message.id %}
-        <div>
-          <form method="POST" action="{{ url_for('edit_message', room_id=message.room_id, message_id=message.id) }}">
-            <p>{{ message.user_name }}</p>
-            <input type="text" id="edit_message" name=edit_message value="{{ message.message }}">
-            <p>{{ message.updated_at }}</p>
-            <input type="submit" value="edit">
-          </form>
-          <form method="POST" action="{{ url_for('delete_message', room_id=message.room_id, message_id=message.id) }}">
-            <input type="submit" value="delete">
-          </form>
+  <div class="container">
+    <div class="chat-container">
+      <div class="user-bar">
+        <div class="back-home">
+          <a href="{{ url_for('home_view') }}"><img src="{{ '/static/img/icon-return_home.png' }}" alt="戻る"></a>
         </div>
-      {% else %}
-        <p>{{ message.user_name }}</p>
-        <p>{{ message.message }}</p>
-        <p>{{ message.updated_at }}</p>
-      {% endif %}
+        <div class="name">
+          <p>@Username</p>
+        </div>
+      </div>
+      <div class="conversation">
+        {% for message in messages %}
+        <div class="conversation-container" id="messages">
+          {% if latest_message.uid == uid and latest_message.id == message.id %}
+            <div id="message">
+
+              <!--------------------------------------------------
+                <form method="POST" action="{{ url_for('edit_message', room_id=message.room_id, message_id=message.id) }}">
+              --------------------------------------------------->
+
+                <p id="message_user_name">@{{ message.user_name }}</p>
+                <p id="edit_message">{{ message.message }}</p>
+                <p id="message_time">{{ message.updated_at }}</p>
+
+                <!------------------------------------------------
+                <input type="submit" value="edit">
+              </form>
+              <form method="POST" action="{{ url_for('delete_message', room_id=message.room_id, message_id=message.id) }}">
+                <input type="submit" value="delete">
+              </form>
+                ------------------------------------------------->
+
+            </div>
+          {% else %}
+            <div id="message">
+              {% if message.uid == uid %}
+                <p id="message_user_name">@{{ message.user_name }}</p>
+              {% else %}
+                <p id="message_friend_name">@{{ message.user_name }}</p>
+              {% endif %}
+              <p id="message_text">{{ message.message }}</p>
+              <p id="message_time">{{ message.updated_at }}</p>
+            </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <form  id="message-form" class="conversation-compose" method="POST" action="{{ url_for('add_message', room_id=room_id) }}">
+        {{ form.hidden_tag() }}
+        {{ form.message(id="message-input", class="input-msg", placeholder="メッセージを入力", maxlength=100) }}<br>
+        <button class="send" type="submit"><img src="{{ '/static/img/icon-paper-plane.png' }}" alt="送信"></button>
+      </form>
     </div>
-    {% endfor %}
   </div>
-  <form method="POST" action="{{ url_for('add_message', room_id=room_id) }}">
-    {{ form.hidden_tag() }}
-    <p>
-      {{ form.message.label }}<br>
-      {{ form.message(size=32) }}<br>
-      {% for error in form.message.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-      {% endfor %}
-    </p>
-    </p>
-    <p>{{ form.submit() }}</p>
-  </form>
-  <a href="{{ url_for('home_view') }}">戻る</a>
 </body>
 </html>
