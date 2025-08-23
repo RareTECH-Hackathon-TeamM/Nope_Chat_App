@@ -3,7 +3,7 @@
 <img width="5334" height="3000" alt="Mチーム-2-1" src="https://github.com/user-attachments/assets/2c0c0633-dd30-47bc-baf2-95f20be81913" />
 
 
-## アプリ概要
+# アプリ概要
 
 ## コンセプト
 
