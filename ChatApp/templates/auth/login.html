@@ -8,7 +8,7 @@
       {{ form.email.label }}
     </p>
     <div>
-      {{ form.email(size=32) }}
+      {{ form.email }}
     </div>
     {% for error in form.email.errors %}
     <span style="color: red;">[{{ error }}]</span>
@@ -21,7 +21,7 @@
 
   <div>
     {{ form.password.label }}<br>
-    {{ form.password(size=32) }}<br>
+    {{ form.password }}<br>
     {% for error in form.password.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
@@ -42,14 +42,14 @@
   </ul>
   {% endif %}
   {% endwith %}
-  <!-- 
-  <label for="email">Email</label>
+
+  {# <label for="email">Email</label>
   <input type="email" id="email" name="email" placeholder="Email" required value="{{ form.email.data or '' }}"
     oninvalid="this.setCustomValidity('メールアドレスを入力してください')" oninput="this.setCustomValidity('')">
   <label for="password">Password</label>
   <input type="password" id="password" name="password" placeholder="Password" required
     oninvalid="this.setCustomValidity('パスワードを入力してください')" oninput="this.setCustomValidity('')">
-  <button type="submit">➡️ ログイン</button> -->
+  <button type="submit">➡️ ログイン</button> #}
 </form>
 <!-- {% if error %}
 <div class="error-message" aria-live="polite">
