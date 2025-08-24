@@ -29,20 +29,20 @@ class SignupForm(FlaskForm):
         DataRequired(message='アカウント名を入力してください'),
         Length(max=20, message='文字数が多すぎます'),
         Regexp(r'^[A-Za-zぁ-んァ-ヶ一-龯ー_]+$',
-               message='使用できない文字が含まれています')
+        message='使用できない文字が含まれています')
     ])
 
     email = StringField('メールアドレス', validators=[
         DataRequired('メールアドレスを入力してください'),
         Regexp(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)',
-               message='メールアドレスが正しくありません'),
+        message='メールアドレスが正しくありません'),
     ])
 
     password = PasswordField('パスワード', validators=[
         Length(min=8, message='8文字以上で入力してください'),
         DataRequired('パスワードを入力してください'),
         Regexp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-=]+$',
-               message='英大文字・小文字・数字を含めてください。'),
+        message='英大文字・小文字・数字を含めてください。'),
         EqualTo('confirm', message='パスワードが一致しません')
     ])
     confirm = PasswordField('パスワード再入力', validators=[
