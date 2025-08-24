@@ -16,7 +16,7 @@
           <a href="{{ url_for('home_view') }}"><img src="{{ '/static/img/icon-return_home.png' }}" alt="戻る"></a>
         </div>
         <div class="name">
-          <p>@Username</p>
+          <p>@{{ user_name }}</p>
         </div>
       </div>
       <div class="conversation">

@@ -16,6 +16,9 @@ class User(UserMixin):
     def get_id(self):
         return self.uid
 
+    def get_name(self):
+        return self.name
+
     # 新規登録トランザクション
     @classmethod
     def create(cls, uid, name, email, password):
