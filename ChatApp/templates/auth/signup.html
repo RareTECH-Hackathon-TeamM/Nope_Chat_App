@@ -10,7 +10,7 @@
                 {{ form.username.label }}
             </p>
             <div>
-                {{ form.username }}
+                {{ form.username(size=32) }}
             </div>
             {% for error in form.username.errors %}
             <p>
@@ -23,7 +23,7 @@
                 {{ form.email.label }}
             </p>
             <div>
-                {{ form.email }}
+                {{ form.email(size=32) }}
             </div>
             {% for error in form.email.errors %}
             <p>
@@ -36,7 +36,7 @@
                 {{ form.password.label }}
             </p>
             <div>
-                {{ form.password }}
+                {{ form.password(size=32) }}
             </div>
             {% for error in form.password.errors %}
             <p>
@@ -49,7 +49,7 @@
                 {{ form.confirm.label }}
             </p>
             <div>
-                {{ form.confirm }}
+                {{ form.confirm(size=32) }}
             </div>
             {% for error in form.confirm.errors %}
             <p>

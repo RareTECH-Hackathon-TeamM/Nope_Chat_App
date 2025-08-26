@@ -1,35 +1,38 @@
 {% extends "auth/base.html" %}
 {% block title %}ログイン - Nope App{% endblock %}
 {% block content %}
-<form action="{{ url_for('login') }}" method="POST" novalidate>
+<form action="{{ url_for('login') }}" method="POST" class="main-container">
   {{ form.hidden_tag() }}
-  <div>
-    <p>
-      {{ form.email.label }}
-    </p>
-    <div>
-      {{ form.email }}
+  <div class="wrapper" id="login">
+    <img src="img/Logo.png" alt="Service Logo">
+    <div class="container" id="input">
+      <div class="wrapper" id="id">
+        <div class="wrapper-field">
+          <p class="label_primary-input-field">
+            {{ form.email.labels }}
+          </p>
+          {{ form.email(class="input-field", size=32) }}
+          {% for error in form.email.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+          {% for error in form.email.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+        </div>
+        <div class="wrapper-field">
+          <p class="label" id="login_password">
+            {{ form.password.label }}
+          </p>
+          {{ form.password(class="input-field", size=32) }}
+          {% for error in form.password.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+        </div>
+      </div>
     </div>
-    {% for error in form.email.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
   </div>
 
-  {% for error in form.email.errors %}
-  <span style="color: red;">[{{ error }}]</span>
-  {% endfor %}
-
-  <div>
-    {{ form.password.label }}<br>
-    {{ form.password }}<br>
-    {% for error in form.password.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </div>
-
-  <div>
-    {{ form.submit() }}
-  </div>
+  {{ form.submit(class="button-login") }}
 
   {% with messages = get_flashed_messages() %}
   {% if messages %}
@@ -56,5 +59,8 @@
   {{ error }}
 </div>
 {% endif %} -->
-<a href="{{ url_for('signup') }}">新規登録</a>
+  <div class="wrapper-signup">
+    <p class="label_secondary">はじめての方はこちら</p>
+    <a href="{{ url_for('signup') }}">新規登録</a>
+  </div>
 {% endblock %}
