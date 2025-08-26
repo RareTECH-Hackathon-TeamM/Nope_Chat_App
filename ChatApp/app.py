@@ -304,6 +304,7 @@ def edit_message(room_id, message_id):
     latest_message = Message.latest_message(room_id)
     if latest_message.get('uid') == uid:
         edit_message = request.form.get('edit_message')
+        print(f'[EDIT_MESSAGE]: {edit_message}')
         Message.edit_message(message_id, edit_message)
         return redirect(url_for('messages_view', room_id=room_id, form=form))
     return redirect(url_for('messages_view', room_id=room_id, form=form))
