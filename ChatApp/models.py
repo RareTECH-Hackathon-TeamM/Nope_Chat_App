@@ -16,6 +16,9 @@ class User(UserMixin):
     def get_id(self):
         return self.uid
 
+    def get_name(self):
+        return self.name
+
     # 新規登録トランザクション
     @classmethod
     def create(cls, uid, name, email, password):
@@ -208,6 +211,7 @@ class Message:
                         SELECT
                             u.name AS user_name,
                             m.id,
+                            m.uid,
                             m.room_id,
                             m.message,
                             m.created_at,

@@ -3,46 +3,80 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <script src="main.js"></script>
-  <title>メッセージ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/messages.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.js"></script>
+  <script src="{{ url_for('static', filename='js/edit_message.js') }}"></script>
+  <title>messages</title>
 </head>
 <body>
-  <div id="message-area" style="border: double 1px">
-    {% for message in messages %}
-    <div class="my-messages" style="border: double 1px">
-      {% if latest_message.uid == uid and latest_message.id == message.id %}
-        <div>
-          <form method="POST" action="{{ url_for('edit_message', room_id=message.room_id, message_id=message.id) }}">
-            <p>{{ message.user_name }}</p>
-            <input type="text" id="edit_message" name=edit_message value="{{ message.message }}">
-            <p>{{ message.updated_at }}</p>
-            <input type="submit" value="edit">
-          </form>
-          <form method="POST" action="{{ url_for('delete_message', room_id=message.room_id, message_id=message.id) }}">
-            <input type="submit" value="delete">
-          </form>
+  <div class="container">
+    <div class="chat-container">
+      <div class="user-bar">
+        <div class="back-home">
+          <a href="{{ url_for('home_view') }}"><img src="{{ '/static/img/icon-return_home.png' }}" alt="戻る"></a>
         </div>
-      {% else %}
-        <p>{{ message.user_name }}</p>
-        <p>{{ message.message }}</p>
-        <p>{{ message.updated_at }}</p>
-      {% endif %}
+        <div class="name">
+          <p>@{{ user_name }}</p>
+        </div>
+      </div>
+      <div class="conversation">
+        {% for message in messages %}
+        <div class="conversation-container messages">
+          {% if latest_message.uid == uid and latest_message.id == message.id %}
+            <div id="modal-open" class="edit-message-container message">
+              <p class="message-user-name">@{{ message.user_name }}</p>
+              <p class="edit-message">{{ message.message }}</p>
+              <p class="message-time">{{ message.updated_at }}</p>
+            </div>
+
+            <!--モーダル-->
+            <div id="modal-container">
+              <div id="modal-header">
+                <div id="modal-header-left">
+                  <img id="modal-close" src="{{ '/static/img/hamburger_menu=Close.png' }}" alt="戻る" tabindex="3">
+                </div>
+                <div id="modal-header-right">
+                  <button type="submit" form="edit-form" id="modal-btn" tabindex="2">編集</button>
+                  <form method="POST" action="{{ url_for('delete_message', room_id=message.room_id, message_id=message.id) }}">
+                    <button type="submit" id="modal-btn" tabindex="-1">削除</button>
+                  </form>
+                </div>
+              </div>
+              <div id="modal-content">
+                <form id="edit-form" method="POST" action="{{ url_for('edit_message', room_id=message.room_id, message_id=message.id) }}">
+                  <p class="message-user-name">@{{ message.user_name }}</p>
+                  <textarea id="message-input" class="edit-message" name="edit_message" tabindex="1">{{ message.message }}</textarea>
+                  <p class="message-time">{{ message.updated_at }}</p>
+                </form>
+              </div>
+            </div>
+
+          {% else %}
+            <div id="message">
+              {% if message.uid == uid %}
+                <p class="message-user-name">@{{ message.user_name }}</p>
+              {% else %}
+                <p class="message-friend-name">@{{ message.user_name }}</p>
+              {% endif %}
+              <p class="message-text">{{ message.message }}</p>
+              <p class="message-time">{{ message.updated_at }}</p>
+            </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <form  id="conversation-compose" method="POST" action="{{ url_for('add_message', room_id=room_id) }}">
+        {{ form.hidden_tag() }}
+        {{ form.message(id="message-input", class="input-msg", placeholder="メッセージを入力", maxlength=100) }}<br>
+        <button class="send" type="submit"><img src="{{ '/static/img/icon-paper-plane.png' }}" alt="送信"></button>
+      </form>
     </div>
-    {% endfor %}
   </div>
-  <form method="POST" action="{{ url_for('add_message', room_id=room_id) }}">
-    {{ form.hidden_tag() }}
-    <p>
-      {{ form.message.label }}<br>
-      {{ form.message(size=32) }}<br>
-      {% for error in form.message.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-      {% endfor %}
-    </p>
-    </p>
-    <p>{{ form.submit() }}</p>
-  </form>
-  <a href="{{ url_for('home_view') }}">戻る</a>
+  <script src="{{url_for('static', filename='js/edit_message.js')}}"></script>
 </body>
 </html>

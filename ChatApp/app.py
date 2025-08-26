@@ -263,6 +263,7 @@ def delete_room(room_id):
 def messages_view(room_id):
     form = MessageForm()
     uid = current_user.get_id()
+    user_name = current_user.get_name()
     messages = Message.get_all_messages(uid, room_id)
     latest_message = Message.latest_message(room_id)
     return render_template(
@@ -271,6 +272,7 @@ def messages_view(room_id):
             room_id=room_id,
             messages=messages,
             uid=uid,
+            user_name=user_name,
             latest_message=latest_message
             )
 
@@ -302,6 +304,7 @@ def edit_message(room_id, message_id):
     latest_message = Message.latest_message(room_id)
     if latest_message.get('uid') == uid:
         edit_message = request.form.get('edit_message')
+        print(f'[EDIT_MESSAGE]: {edit_message}')
         Message.edit_message(message_id, edit_message)
         return redirect(url_for('messages_view', room_id=room_id, form=form))
     return redirect(url_for('messages_view', room_id=room_id, form=form))
