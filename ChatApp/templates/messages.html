@@ -73,7 +73,7 @@
       <form  id="conversation-compose" method="POST" action="{{ url_for('add_message', room_id=room_id) }}">
         {{ form.hidden_tag() }}
         {{ form.message(id="message-input", class="input-msg", placeholder="メッセージを入力", maxlength=100) }}<br>
-        <button class="send" type="submit"><img src="{{ '/static/img/icon-paper-plane.png' }}" alt="送信"></button>
+        <button class="send" type="submit" form="conversation-compose"><img src="{{ '/static/img/icon-paper-plane.png' }}" alt="送信"></button>
       </form>
     </div>
   </div>
