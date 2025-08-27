@@ -1,46 +1,82 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
-  <link rel="stylesheet" href="../static/home.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 
-  <title>ルーム</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.js"></script>
+  <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+  <title>Chat Rooms</title>
 </head>
 <body>
-  <header>
-    <div class="hamburger-menu" id="hamburger-menu" role="button" aria-label="メニューを開く" tabindex="0">
-      <div class="hamburger-line"></div>
-      <div class="hamburger-line"></div>
-      <div class="hamburger-line"></div>
+  <div class="container">
+    <div class="rooms-container">
+      <div class="nav-container">
+        <div class="nav-left">
+          <p>@Username</p>
+          <p>Chat Rooms</p>
+        </div>
+        <div class="nav-right">
+          <img class="hamburger-img" src="{{ '/static/img/hamburger_menu=Default.png' }}" alt="メニュー">
+
+          <!--ハンバーガーメニュー-->
+          <!--{# <div id="hamburger-container">
+            <form method="POST" action="{{url_for('add_friend')}}">
+              <button type="submit">友達追加</button>
+            </form>
+            <form method="POST" action="{{url_for('logout')}}">
+              <button type="submit">ログアウト</button>
+            </form>
+          </div> #}-->
+        </div>
+      </div>
+      <div class="chat-rooms-container">
+        <div class="rooms-area">
+          {% for room in rooms %}
+          <div class="room-area">
+            <button id="go-message-view-btn" form="go-message-view">
+              <div class="room-area-top">
+                <p class="room-name">@{{ room.friend_name }}</p>
+                <p class="room-time">{{ room.latest_time }}</p>
+              </div>
+              <p class="room-message">{{ room.latest_message }}</p>
+              <form id="go-message-view" method="GET" action="{{ url_for('messages_view', room_id=room.room_id) }}">
+              </form>
+              <form id="delete-room" method="POST" action="{{ url_for('delete_room', room_id=room.room_id) }}">
+              </form>
+            </button>
+            <button id="room-delete-btn" type="submit" form="delete-room">Delete</button>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="search-container">
+        <form method="POST" action="{{ url_for('home_view') }}">
+          {{ form.hidden_tag() }}
+          {{ form.search_friend(class="search-field", placeholder="SEARCH") }}<br>
+          {% for error in form.search_friend.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+          <form method="POST" action="{{ url_for('home') }}">
+            <button class="search-btn" type="submit"><img src="{{ '/static/img/icon-search.png' }}" alt="検索"></button>
+          </form>
+          {% with messages = get_flashed_messages() %} {% if messages %}
+          <ul class="flashes">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %} {% endwith %}
+        </form>
+      </div>
     </div>
-    <nav class="nav-menu" id="nav-menu">
-      <form method="POST" action="{{ url_for('add_friend') }}">
-        <button type="submit" aria-label="友達を追加する">友達追加</button>
-      </form>
-      <form method="POST" action="{{ url_for('logout') }}">
-        <button type="submit" aria-label="ログアウトする">ログアウト</button>
-      </form>
-    </nav>
-  </header>
-  <h2>ルーム</h2>
-  <div id="rooms-area" class="rooms-area">
-    {% for room in rooms %}
-    <div class="my-rooms">
-      <p>{{ room.friend_name }}</p>
-      <p>{{ room.latest_message }}</p>
-      <p>{{ room.latest_time }}</p>
-      <form method="GET" action="{{ url_for('messages_view', room_id=room.room_id) }}">
-        <input type="submit" value="open">
-      </form>
-      <form method="POST" action="{{ url_for('delete_room', room_id=room.room_id) }}">
-        <input type="hidden" name="_method" value="DELETE">
-        <input type="submit" value="delete">
-      </form>
-    </div>
-    {% endfor %}
   </div>
+<<<<<<< HEAD
   <form method="POST" action="{{ url_for('search_friend') }}">
     {{ form.hidden_tag() }}
     <p>
@@ -63,5 +99,8 @@
   {% endwith %}
   <script defer src="{{ url_for('static', filename='main.js') }}"></script>
   <script defer src="../static/main.js"></script>
+=======
+  <script src="{{url_for('static', filename='js/home.js')}}"></script>
+>>>>>>> d85865382315593572c5318d1d80281a13efdc93
 </body>
 </html>
