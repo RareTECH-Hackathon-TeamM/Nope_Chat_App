@@ -76,31 +76,6 @@
       </div>
     </div>
   </div>
-<<<<<<< HEAD
-  <form method="POST" action="{{ url_for('search_friend') }}">
-    {{ form.hidden_tag() }}
-    <p>
-      {{ form.search_friend.label }}
-      {{ form.search_friend(id="search_friend", size=32) }}<br>
-      {% for error in form.search_friend.errors %}
-        <span style="color: red;">{{ error }}</span>
-      {% endfor %}
-    </p>
-    <p>{{ form.submit() }}</p>
-  </form>
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul class="flashes">
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
-  <script defer src="{{ url_for('static', filename='main.js') }}"></script>
-  <script defer src="../static/main.js"></script>
-=======
   <script src="{{url_for('static', filename='js/home.js')}}"></script>
->>>>>>> d85865382315593572c5318d1d80281a13efdc93
 </body>
 </html>
