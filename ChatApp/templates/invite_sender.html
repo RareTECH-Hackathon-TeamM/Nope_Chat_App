@@ -3,13 +3,21 @@
 <head>
   <meta charset="utf=8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <script src="main.js"></script>
-  <title>友達登録</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/invite_sender.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+  <title>QRcode</title>
 </head>
 <body>
-  <h3>招待QRコード</h3>
-  <img src="{{ url_for('invite_qrcode', room_id=room_id) }}" alt="QRコード">
-  <a href="{{ url_for('home_view') }}">戻る</a>
+  <div class="container">
+    <div class="head-container">
+      <a href="{{ url_for('home_view') }}"><img src="{{ '/static/img/icon-return_home.png' }}" alt="戻る"></a>
+      <p>招待QRコード</p>
+    </div>
+    <div class="main-container">
+      <img src="{{ url_for('invite_qrcode', room_id=room_id) }}" alt="QRコード">
+    </div>
+  </div>
 </body>
 </html>
