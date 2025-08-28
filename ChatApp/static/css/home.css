@@ -24,6 +24,7 @@ body {
   max-width: 100%;
   height: 100vh;
   width: 91vw;
+  margin-top: 4px;
   background: #121212;
   overflow: hidden;
 }
@@ -50,14 +51,16 @@ body {
 }
 
 .nav-left {
-  display: flex;
-  flex-direction: row;
-  padding: 2px 10px;
+  padding: 0 10px;
 }
 
 .nav-left p {
-  display: flex;
-  font-size: 16px;
+  font-size: 19px;
+  color: #F0F0F0;
+}
+
+.nav-right {
+  padding: 0 10px;
 }
 
 .rooms-area {
@@ -68,20 +71,10 @@ body {
   background: #121212;
 }
 
-.rooms-area:hover {
-  background: #121212;
-  opacity: 0.5;
-}
-
 .room-area {
   position: relative;
   overflow: hidden;
 }
-
-/*.room-area:active {*/
-  /*background: #3D3D3D;*/
-  /*opacity: 0.5;*/
-/*}*/
 
 #go-message-view-btn {
   z-index: 200;
@@ -93,12 +86,18 @@ body {
   display: flex;
   flex-direction: column;
   background: #121212;
+  border: none;
   width: 100%;
   gap: 4px;
 }
 
+#go-message-view-btn:active {
+  background: #3D3D3D;
+}
+
 #go-message-view-btn.active {
-  right: 55px;
+  z-index: 100;
+  right: 59px;
 }
 
 .room-area-top {
@@ -137,6 +136,11 @@ body {
   color: #F0F0F0;
   background: #FF8A90;
   border: none;
+  margin: 1px;
+}
+
+#room-delete-btn:active {
+  opacity: 0.8;
 }
 
 .search-container {

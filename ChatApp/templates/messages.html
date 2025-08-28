@@ -24,7 +24,7 @@
           <p>@{{ user_name }}</p>
         </div>
       </div>
-      <div class="conversation">
+      <div id="conversation" class="conversation">
         {% for message in messages %}
         <div class="conversation-container messages">
           {% if latest_message.uid == uid and latest_message.id == message.id %}
