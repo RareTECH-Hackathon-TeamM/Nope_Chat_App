@@ -220,7 +220,8 @@ def invite_sender_view(room_id):
 @app.route('/invite/receiver/<room_id>', methods=['GET'])
 @login_required
 def invite_receiver_view(room_id):
-    return render_template('invite_receiver.html', room_id=room_id)
+    sender_name = Room.get_sender_name(room_id)
+    return render_template('invite_receiver.html', room_id=room_id, sender_name=sender_name)
 
 
 # 友達追加したときの処理
