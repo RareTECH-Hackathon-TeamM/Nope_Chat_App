@@ -1,29 +1,20 @@
 'use strict';
 
-{
+document.addEventListener('DOMContentLoaded', () => {
   const open = document.getElementById('go-message-view-btn');
-  const close = document.getElementById('room-delete-btn');
+  if (!open) return;
 
-  const manager = new Hammer.Manager(open);
-  const hammertime = new Hammer.Press({
-    time: 500
+  const hammertime = new Hammer(open);
+
+  hammertime.get('pan').set({
+    direction: Hammer.DIRECTION_HORIZONTAL
   });
 
-  manager.add(hammertime);
-
-  manager.on('press', () => {
+  hammertime.on('panleft', () => {
     open.classList.add('active');
   });
 
-  manager.on('press', () => {
+  hammertime.on('panright', () => {
     open.classList.remove('active');
   });
-
-  open.addEventListener('mouseout', () => {
-    open.classList.add('active');
-  });
-
-  close.addEventListener('click', () => {
-    open.classList.remove('active');
-  });
-}
+});
