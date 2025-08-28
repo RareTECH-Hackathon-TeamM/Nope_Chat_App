@@ -2,60 +2,55 @@
 {% block title %}サインアップ - Nope App{% endblock %}
 {% block content %}
 <!-- <div class="signup-container"> -->
-<form action="{{ url_for('signup') }}" method="POST">
+<form action="{{ url_for('signup') }}" method="POST" class="main-container" id="signup">
     {{ form.hidden_tag() }}
-    <div>
-        <div>
-            <p>
-                {{ form.username.label }}
-            </p>
-            <div>
-                {{ form.username }}
+    <div class="wrapper-contents">
+        <img src="{{ url_for('static', filename='img/Logo.png') }}" alt="サービス”NOPE”ロゴ">
+        <div class="container-form-signup">
+            <div class="wrapper-field">
+                <p class="label_primary-input-field">
+                    {{ form.username.label }}
+                </p>
+                {{ form.username(class="input-field", size=32) }}
+                {% for error in form.username.errors %}
+                <p class="error">
+                    [{{ error }}]
+                </p>
+                {% endfor %}
             </div>
-            {% for error in form.username.errors %}
-            <p>
-                [{{ error }}]
-            </p>
-            {% endfor %}
-        </div>
-        <div>
-            <p>
-                {{ form.email.label }}
-            </p>
-            <div>
-                {{ form.email }}
+            <div class="wrapper-field">
+                <p class="label_primary-input-field">
+                    {{ form.email.label }}
+                </p>
+                {{ form.email(class="input-field", size=32) }}
+                {% for error in form.email.errors %}
+                <p class="error">
+                    {{ error }}
+                </p>
+                {% endfor %}
             </div>
-            {% for error in form.email.errors %}
-            <p>
-                [{{ error }}]
-            </p>
-            {% endfor %}
-        </div>
-        <div>
-            <p>
-                {{ form.password.label }}
-            </p>
-            <div>
-                {{ form.password }}
+            <div class="wrapper-field">
+                <p class="label_primary-input-field">
+                    {{ form.password.label }}
+                </p>
+                {{ form.password(class="input-field", size=32) }}
+                {% for error in form.password.errors %}
+                <p class="error">
+                    {{ error }}
+                </p>
+                {% endfor %}
             </div>
-            {% for error in form.password.errors %}
-            <p>
-                [{{ error }}]
-            </p>
-            {% endfor %}
-        </div>
-        <div>
-            <p>
-                {{ form.confirm.label }}
-            </p>
-            <div>
-                {{ form.confirm }}
+            <div class="wrapper-field">
+                <p class="label_primary-input-field">
+                    {{ form.confirm.label }}
+                </p>
+                {{ form.confirm(class="input-field", size=32) }}
+                {% for error in form.confirm.errors %}
+                <p class="error">
+                    {{ error }}
+                </p>
+                {% endfor %}
             </div>
-            {% for error in form.confirm.errors %}
-            <p>
-                [{{ error }}]
-            </p>
-            {% endfor %}
         </div>
         <div>
             {{ form.submit() }}

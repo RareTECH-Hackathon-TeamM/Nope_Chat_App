@@ -21,11 +21,7 @@ from flask_bcrypt import (
         )
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from forms import (SignupForm,
-                   LoginForm,
-                   SearchForm,
-                   MessageForm
-                   )
+from forms import SignupForm, LoginForm, SearchForm, MessageForm
 import io
 from models import User, Room, Message
 from nanoid import generate
