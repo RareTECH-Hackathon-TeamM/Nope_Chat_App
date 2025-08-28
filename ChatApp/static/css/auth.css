@@ -2,11 +2,17 @@
   padding: 0;
   margin: 0;
   background: #121212;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100vw;
+  height: 100%;
 }
 
 .main-container {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,6 +20,8 @@
 }
 
 .wrapper-contents {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -23,6 +31,13 @@
 
 .icon {
   background-color: #21d92a;
+}
+
+footer {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #f0f0f0;
 }
 
 /* login.htmlのcss */
@@ -77,16 +92,38 @@
   background-color: #fafafa;
 }
 
-.button-login {
-  width: fit-content;
-  background-color: #21d92a;
-  border-radius: 10px;
+.input-field::placeholder {
+  padding: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.3);
 }
 
-.wrapper-signup {
+.button-login {
+  padding: 5px 8px;
+  width: fit-content;
+  height: 48px;
+  background-color: #21d92a;
+  border-radius: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-login img {
+  margin-right: 8px;
+}
+
+.nav-signup {
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   gap: 4px;
 }
 
@@ -95,6 +132,24 @@
   font-family: "Inter", sans-serif;
   font-size: 12px;
   font-weight: 400;
+}
+
+.nav_button-signup {
+  width: 100%;
+  height: 48px;
+  background-color: #21d92a;
+  border-radius: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav_button-signup img {
+  margin-right: 8px;
 }
 
 /* signup.htmlのcss */
@@ -116,4 +171,40 @@
 
 .error {
   color: red;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 400px;
+}
+
+.wrapper-signup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-signup {
+  width: 100%;
+  height: 48px;
+  background-color: #21d92a;
+  border-radius: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-signup img {
+  margin-right: 8px;
+}
+
+.wrapper-signup a {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #f0f0f0;
 }

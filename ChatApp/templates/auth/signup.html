@@ -52,9 +52,14 @@
                 {% endfor %}
             </div>
         </div>
-        <div>
-            {{ form.submit() }}
+        <div class="wrapper-signup">
+            <button type="submit" class="button-signup">
+                <img src="../../static/img/icon-file-signature.png" alt="新規登録アイコン" class="icon">サインアップ
+            </button>
+            {# {{ form.submit }} #}
+            <a href="{{ url_for('login') }}">戻る</a>
         </div>
+
     </div>
 
     {# <label for="account_name">Account Name</label>
@@ -72,7 +77,7 @@
         oninvalid="this.setCustomValidity('確認用パスワードを入力してください')" oninput="this.setCustomValidity('')">
     <button type="submit">📝 サインアップ</button> #}
 </form>
-<a href="{{ url_for('login') }}">戻る</a>
+
 <!-- {% if error %}
     <div class="error-message" aria-live="polite">
         {{ error }}
