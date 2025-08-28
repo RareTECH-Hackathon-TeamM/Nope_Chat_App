@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.js"></script>
-  <script src="{{ url_for('static', filename='js/home.js') }}"></script>
   <title>Chat Rooms</title>
 </head>
 <body>
@@ -22,19 +21,23 @@
           <p>Chat Rooms</p>
         </div>
         <div class="nav-right">
-          <img class="hamburger-img" src="{{ '/static/img/hamburger_menu=Default.png' }}" alt="メニュー">
-
-          <!--ハンバーガーメニュー-->
-          <!--{# <div id="hamburger-container">
-            <form method="POST" action="{{url_for('add_friend')}}">
-              <button type="submit">友達追加</button>
-            </form>
-            <form method="POST" action="{{url_for('logout')}}">
-              <button type="submit">ログアウト</button>
-            </form>
-          </div> #}-->
+          <img class="hamburger-img" id="hamburger-btn" src="{{ '/static/img/hamburger_menu=Default.png' }}" alt="メニュー">
         </div>
       </div>
+
+      <!-- モーダルウィンドウ -->
+      <div id="hamburger-modal" class="modal">
+        <div class="modal-content">
+          <span class="modal-close">&times;</span>
+          <form method="POST" action="{{ url_for('add_friend') }}">
+            <button type="submit">友達追加</button>
+          </form>
+          <form method="POST" action="{{ url_for('logout') }}">
+            <button type="submit">ログアウト</button>
+          </form>
+        </div>
+      </div>
+
       <div class="chat-rooms-container">
         <div class="rooms-area">
           {% for room in rooms %}
@@ -76,6 +79,6 @@
       </div>
     </div>
   </div>
-  <script src="{{url_for('static', filename='js/home.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 </body>
 </html>

@@ -7,11 +7,9 @@
 }
 
 body {
-  /*------------font--------------*/
   font-family: "Ubuntu", sans-serif;
   font-weight: 400;
   font-style: normal;
-  /*------------------------------*/
   background-color: #121212;
   height: 100vh;
   display: flex;
@@ -47,6 +45,7 @@ body {
   width: 25px;
   height: 25px;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .nav-left {
@@ -77,11 +76,6 @@ body {
   position: relative;
   overflow: hidden;
 }
-
-/*.room-area:active {*/
-  /*background: #3D3D3D;*/
-  /*opacity: 0.5;*/
-/*}*/
 
 #go-message-view-btn {
   z-index: 200;
@@ -179,7 +173,58 @@ body {
   width: 29px;
   border-radius: 50%;
   background: #121212;
-  border: None;
+  border: none;
   margin-left: 8px;
   display: flex;
+}
+
+/* モーダルスタイル */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: flex-end; /* 右側に寄せる */
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #3D3D3D;
+  padding: 20px;
+  border-radius: 10px 0 0 10px; /* 右側以外に角丸 */
+  width: 25%; /* 画面の右半分を使用 */
+  max-width: 400px;
+  height: 100%; /* 縦にフルサイズ */
+  text-align: center;
+  position: relative;
+  margin: 0;
+}
+
+.modal-content button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  background: #21D92A;
+  color: #F0F0F0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background: #1AB923;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: #F0F0F0;
+  font-size: 24px;
+  cursor: pointer;
 }
