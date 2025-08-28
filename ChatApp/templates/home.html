@@ -17,11 +17,20 @@
     <div class="rooms-container">
       <div class="nav-container">
         <div class="nav-left">
-          <p>@Username</p>
           <p>Chat Rooms</p>
         </div>
         <div class="nav-right">
-          <img class="hamburger-img" id="hamburger-btn" src="{{ '/static/img/hamburger_menu=Default.png' }}" alt="メニュー">
+          <img class="hamburger-img" src="{{ '/static/img/hamburger_menu=Default.png' }}" alt="メニュー">
+
+          <!--ハンバーガーメニュー-->
+          <div id="hamburger-container">
+            <form method="POST" action="{{url_for('add_friend')}}">
+              <button type="submit">友達追加</button>
+            </form>
+            <form method="POST" action="{{url_for('logout')}}">
+              <button type="submit">ログアウト</button>
+            </form>
+          </div>
         </div>
       </div>
 

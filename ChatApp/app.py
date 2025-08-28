@@ -220,7 +220,8 @@ def invite_sender_view(room_id):
 @app.route('/invite/receiver/<room_id>', methods=['GET'])
 @login_required
 def invite_receiver_view(room_id):
-    return render_template('invite_receiver.html', room_id=room_id)
+    sender_name = Room.get_sender_name(room_id)
+    return render_template('invite_receiver.html', room_id=room_id, sender_name=sender_name)
 
 
 # 友達追加したときの処理
@@ -236,12 +237,22 @@ def invite_receiver(room_id):
 @app.route('/invite/qrcode/<room_id>')
 @login_required
 def invite_qrcode(room_id):
+    # invite_receiverのURLを生成
     invite_url = url_for(
             'invite_receiver_view',
             room_id=room_id,
             _external=True
             )
-    qr = qrcode.make(invite_url)
+    # QRコードを生成
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(invite_url)
+    qr.make(fit=True)
+    qr = qr.make_image(fill_color="#21D92A", back_color="#121212")
     buf = io.BytesIO()
     qr.save(buf, format='PNG')
     buf.seek(0)
