@@ -134,7 +134,6 @@ def home_view():
     form = SearchForm()
     uid = current_user.get_id()
     rooms = Room.get_all_rooms(uid)
-    print(f'[GET_HOME.ROOMS]: {rooms}')
     return render_template(
                         'home.html',
                         form=form,
@@ -151,20 +150,17 @@ def home():
     rooms = Room.get_all_rooms(uid)
     filter_keyword = form.search_friend.data
     filter_rooms = []
-    # print(f'[FILTER(ROOMS)]: {rooms}')
     if rooms:
         if not filter_keyword:
             return redirect(url_for('home_view'))
         else:
             for room in rooms:
-                # print(f'[ROOM]: {room}')
                 friend_name = room.get('friend_name')
                 if filter_keyword in friend_name:
                     filter_rooms.append(room)
                 else:
                     pass
             else:
-                # print(f'[FILTER(FILTER_ROOMS)]: {filter_rooms}')
                 return render_template('home.html',
                                        form=form,
                                        rooms=filter_rooms)
@@ -210,7 +206,13 @@ def add_friend():
 @app.route('/invite/sender/<room_id>', methods=['GET'])
 @login_required
 def invite_sender_view(room_id):
-    return render_template('invite_sender.html', room_id=room_id)
+    # invite_receiverのURLを生成
+    invite_url = url_for(
+            'invite_receiver_view',
+            room_id=room_id,
+            _external=True
+            )
+    return render_template('invite_sender.html', room_id=room_id, invite_url=invite_url)
 
 
 # QRコード読み取り後遷移する画面
@@ -244,7 +246,7 @@ def invite_qrcode(room_id):
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
+        box_size=8,
         border=4,
     )
     qr.add_data(invite_url)
@@ -278,9 +280,7 @@ def messages_view(room_id):
             pass
         else:
             user_name = user
-            print(f'[USER_NAME]: {user_name}')
 
-    print(f'[USER_NAME]: {user_name}')
     messages = Message.get_all_messages(uid, room_id)
     latest_message = Message.latest_message(room_id)
     return render_template(
