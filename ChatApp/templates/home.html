@@ -38,18 +38,18 @@
         <div class="rooms-area">
           {% for room in rooms %}
           <div class="room-area">
-            <button id="go-message-view-btn" form="go-message-view">
+            <button id="go-message-view-btn-{{ room.room_id }}" class="go-message-view-btn" form="go-message-view-{{ room.room_id }}">
               <div class="room-area-top">
                 <p class="room-name">@{{ room.friend_name }}</p>
                 <p class="room-time">{{ room.latest_time }}</p>
               </div>
               <p class="room-message">{{ room.latest_message }}</p>
-              <form id="go-message-view" method="GET" action="{{ url_for('messages_view', room_id=room.room_id) }}">
+              <form id="go-message-view-{{ room.room_id }}" method="GET" action="{{ url_for('messages_view', room_id=room.room_id) }}">
               </form>
-              <form id="delete-room" method="POST" action="{{ url_for('delete_room', room_id=room.room_id) }}">
+              <form id="delete-room-{{ room.room_id }}" method="POST" action="{{ url_for('delete_room', room_id=room.room_id) }}">
               </form>
             </button>
-            <button id="room-delete-btn" type="submit" form="delete-room">Delete</button>
+            <button id="room-delete-btn" type="submit" form="delete-room-{{ room.room_id }}">Delete</button>
           </div>
           {% endfor %}
         </div>
@@ -75,6 +75,6 @@
       </div>
     </div>
   </div>
-  <script src="{{url_for('static', filename='js/home.js')}}"></script>
+  <!--<script src="{{url_for('static', filename='js/home.js')}}"></script>-->
 </body>
 </html>

@@ -1,20 +1,24 @@
 'use strict';
 
+//各ルームに対してスワイプの処理を付与
 document.addEventListener('DOMContentLoaded', () => {
-  const open = document.getElementById('go-message-view-btn');
-  if (!open) return;
+  const buttons = document.getElementsByClassName('go-message-view-btn');
+  if (!buttons.length) return;
 
-  const hammertime = new Hammer(open);
+  Array.from(buttons).forEach(button => {
 
-  hammertime.get('pan').set({
-    direction: Hammer.DIRECTION_HORIZONTAL
-  });
+    const hammertime = new Hammer(button);
 
-  hammertime.on('panleft', () => {
-    open.classList.add('active');
-  });
+    hammertime.get('pan').set({
+      direction: Hammer.DIRECTION_HORIZONTAL
+    });
 
-  hammertime.on('panright', () => {
-    open.classList.remove('active');
+    hammertime.on('panleft', () => {
+      button.classList.add('active');
+    });
+
+    hammertime.on('panright', () => {
+      button.classList.remove('active');
+    });
   });
 });
