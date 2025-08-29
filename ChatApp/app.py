@@ -134,6 +134,7 @@ def home_view():
     form = SearchForm()
     uid = current_user.get_id()
     rooms = Room.get_all_rooms(uid)
+    print(f'[GET_HOME.ROOMS]: {rooms}')
     return render_template(
                         'home.html',
                         form=form,
@@ -268,6 +269,7 @@ def delete_room(room_id):
 @app.route('/room/<room_id>/messages', methods=['GET'])
 @login_required
 def messages_view(room_id):
+    print(f'[MESSAGE.ROOM_ID]: {room_id}')
     form = MessageForm()
     uid = current_user.get_id()
     user_name = current_user.get_name()
