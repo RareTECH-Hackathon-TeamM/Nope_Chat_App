@@ -11,6 +11,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.js"></script>
   <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/home_modal.js') }}"></script>
   <title>Chat Rooms</title>
 </head>
 <body>
@@ -21,17 +22,35 @@
           <p>Chat Rooms</p>
         </div>
         <div class="nav-right">
-          <img class="hamburger-img" src="{{ '/static/img/hamburger_menu=Default.png' }}" alt="メニュー">
+          <img id="modal-open" class="hamburger-img" src="{{ '/static/img/hamburger_menu=Default.png' }}" alt="メニュー">
 
           <!--ハンバーガーメニュー-->
-          <div id="hamburger-container">
-            <form method="POST" action="{{url_for('add_friend')}}">
-              <button type="submit">友達追加</button>
-            </form>
-            <form method="POST" action="{{url_for('logout')}}">
-              <button type="submit">ログアウト</button>
-            </form>
+          <div id="modal-container">
+            <div id="modal-contents">
+
+              <form method="POST" action="{{url_for('add_friend')}}">
+                <button type="submit"><img src="{{ '/static/img/icon-user-plus.png' }}">友達追加</button>
+                <p class="hidden">下記の開発終了時に削除</p>
+              </form>
+
+              <form action="">
+                <button><img src="{{ '/static/img/icon-user-plus.png' }}">マイアカウント</button>
+                <p>開発中...</p>
+              </form>
+
+              <form action="">
+                <button><img src="{{ '/static/img/icon-user-plus.png' }}">設定</button>
+                <p>開発中...</p>
+              </form>
+
+              <form method="POST" action="{{url_for('logout')}}">
+                <button class="logout-btn" type="submit"><img src="{{ '/static/img/icon-user-plus.png' }}">ログアウト</button>
+              </form>
+
+            </div>
           </div>
+          <div id="modal-background"></div>
+
         </div>
       </div>
       <div class="chat-rooms-container">
@@ -75,6 +94,7 @@
       </div>
     </div>
   </div>
-  <!--<script src="{{url_for('static', filename='js/home.js')}}"></script>-->
+  <script src="{{url_for('static', filename='js/home.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/home_modal.js') }}"></script>
 </body>
 </html>
