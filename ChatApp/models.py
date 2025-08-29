@@ -220,6 +220,26 @@ class Room:
         finally:
             db_pool.release(conn)
 
+    # 友達の名前取得トランザクション
+    @classmethod
+    def get_friend_name(cls, room_id):
+        conn = db_pool.get_conn()
+        try:
+            with conn.cursor() as cur:
+                sql = """
+                SELECT u.name FROM user_rooms ur
+                JOIN users u ON u.uid = ur.uid
+                WHERE ur.room_id = %s;
+                """
+                cur.execute(sql, (room_id,))
+                sender_name = cur.fetchall()
+                return sender_name
+        except pymysql.Error as e:
+            print(f'エラーが発生しています：{e}')
+            abort(500)
+        finally:
+            db_pool.release(conn)
+
 
 class Message:
     # メッセージ全件取得トランザクション

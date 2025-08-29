@@ -269,10 +269,18 @@ def delete_room(room_id):
 @app.route('/room/<room_id>/messages', methods=['GET'])
 @login_required
 def messages_view(room_id):
-    print(f'[MESSAGE.ROOM_ID]: {room_id}')
     form = MessageForm()
     uid = current_user.get_id()
-    user_name = current_user.get_name()
+    current_user_name = current_user.get_name()
+    users = Room.get_friend_name(room_id)
+    for user in users:
+        if user is current_user_name:
+            pass
+        else:
+            user_name = user
+            print(f'[USER_NAME]: {user_name}')
+
+    print(f'[USER_NAME]: {user_name}')
     messages = Message.get_all_messages(uid, room_id)
     latest_message = Message.latest_message(room_id)
     return render_template(
