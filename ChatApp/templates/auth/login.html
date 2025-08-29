@@ -9,7 +9,7 @@
       <div class="wrapper" id="id">
         <div class="wrapper-field">
           <p class="label_primary-input-field">
-            {{ form.email.labels }}
+            {{ form.email.label }}
           </p>
           {{ form.email(class="input-field", size=32) }}
           {% for error in form.email.errors %}
@@ -20,7 +20,7 @@
           {% endfor %}
         </div>
         <div class="wrapper-field">
-          <p class="label" id="login_password">
+          <p class="label_primary-input-field">
             {{ form.password.label }}
           </p>
           {{ form.password(class="input-field", size=32) }}
@@ -29,8 +29,16 @@
           {% endfor %}
         </div>
       </div>
-      <button type="submit" class="button-login"><img src="../../static/img/icon-sign-in.png" alt="ログインアイコン"
-          class="icon" id="sign-in">ログイン</button>
+      <button type="submit" class="button-login">
+        <img src="../../static/img/icon-sign-in.png" alt="ログインアイコン" class="icon">ログイン
+      </button>
+    </div>
+    <div class="nav-signup">
+      <p class="label_secondary">はじめての方はこちら</p>
+      <button type="button" onclick="location.href='{{ url_for('signup') }}'" class="nav_button-signup">
+        <img src="../../static/img/icon-file-signature.png" alt="新規登録アイコン" class="icon">新規登録
+      </button>
+      <!-- <a href="{{ url_for('signup') }}">新規登録</a> -->
     </div>
   </div>
 
@@ -61,8 +69,5 @@
   {{ error }}
 </div>
 {% endif %} -->
-<div class="wrapper-signup">
-  <p class="label_secondary">はじめての方はこちら</p>
-  <a href="{{ url_for('signup') }}">新規登録</a>
-</div>
+
 {% endblock %}
