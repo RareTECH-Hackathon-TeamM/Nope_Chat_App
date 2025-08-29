@@ -7,11 +7,6 @@
 }
 
 body {
-  /*------------font--------------*/
-  font-family: "Ubuntu", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  /*------------------------------*/
   background-color: #121212;
   height: 100vh;
   display: flex;
@@ -59,4 +54,26 @@ body {
   border-radius: 10px;
   background: #121212;
   opacity: 0.8;
+}
+
+.hidden {
+  visibility: hidden
+}
+
+#copyButton {
+  position: absolute;
+  top: 75%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+  border-radius: 10px;
+  background: rgba(33, 217, 42, 0.3);
+  color: #F0F0F0;
+  font-size: 12px;
+  width: 20vh;
+  height: 5vh;
+}
+
+#copyButton:active {
+  opacity: 0.5;
 }
