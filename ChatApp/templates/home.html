@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.js"></script>
+  <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/home_modal.js') }}"></script>
+  <title>Chat Rooms</title>
+</head>
+<body>
+  <div class="container">
+    <div class="rooms-container">
+      <div class="nav-container">
+        <div class="nav-left">
+          <p>Chat Rooms</p>
+        </div>
+        <div class="nav-right">
+          <img id="modal-open" class="hamburger-img" src="{{ '/static/img/hamburger_menu=Default.png' }}" alt="メニュー">
+
+          <!--ハンバーガーメニュー-->
+          <div id="modal-container">
+            <div id="modal-contents">
+
+              <form method="POST" action="{{url_for('add_friend')}}">
+                <button type="submit"><img src="{{ '/static/img/icon-user-plus.png' }}">友達追加</button>
+                <p class="hidden">下記の開発終了時に削除</p>
+              </form>
+
+              <form action="">
+                <button><img src="{{ '/static/img/user-alt.png' }}">マイアカウント</button>
+                <p>開発中...</p>
+              </form>
+
+              <form action="">
+                <button><img src="{{ '/static/img/sliders-h.png' }}">設定</button>
+                <p>開発中...</p>
+              </form>
+
+              <form method="POST" action="{{url_for('logout')}}">
+                <button class="logout-btn" type="submit"><img src="{{ '/static/img/sign-out-alt.png' }}">ログアウト</button>
+              </form>
+
+            </div>
+          </div>
+          <div id="modal-background"></div>
+
+        </div>
+      </div>
+      <div class="chat-rooms-container">
+        <div class="rooms-area">
+          {% for room in rooms %}
+          <div class="room-area">
+            <button id="go-message-view-btn-{{ room.room_id }}" class="go-message-view-btn" form="go-message-view-{{ room.room_id }}">
+              <div class="room-area-top">
+                <p class="room-name">@{{ room.friend_name }}</p>
+                <p class="room-time">{{ room.latest_time }}</p>
+              </div>
+              <p class="room-message">{{ room.latest_message }}</p>
+              <form id="go-message-view-{{ room.room_id }}" method="GET" action="{{ url_for('messages_view', room_id=room.room_id) }}">
+              </form>
+              <form id="delete-room-{{ room.room_id }}" method="POST" action="{{ url_for('delete_room', room_id=room.room_id) }}">
+              </form>
+            </button>
+            <button id="room-delete-btn" type="submit" form="delete-room-{{ room.room_id }}">Delete</button>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div id="search-container" class="search-container">
+        <form method="POST" action="{{ url_for('home_view') }}">
+          {{ form.hidden_tag() }}
+          {{ form.search_friend(class="search-field", placeholder="SEARCH") }}<br>
+          {% for error in form.search_friend.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+          <form method="POST" action="{{ url_for('home') }}">
+            <button class="search-btn" type="submit"><img src="{{ '/static/img/icon-search.png' }}" alt="検索"></button>
+          </form>
+          {% with messages = get_flashed_messages() %} {% if messages %}
+          <ul class="flashes">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %} {% endwith %}
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="{{url_for('static', filename='js/home.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/home_modal.js') }}"></script>
+</body>
+</html>

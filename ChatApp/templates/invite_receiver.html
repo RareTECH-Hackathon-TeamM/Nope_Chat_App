@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang-ja>
+<head>
+  <meta charset="utf=8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/invite_receiver.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <title>Add Friend</title>
+</head>
+<body>
+  <div class="container">
+    <div class="head-container">
+      <a href="{{ url_for('home_view') }}"><img src="{{ '/static/img/icon-return_home.png' }}" alt="戻る"></a>
+      <p>友達追加</p>
+    </div>
+    <div class="main-container">
+      <div class="sender-container">
+        <p id="sender-label">User Name</p>
+        {% for sender in sender_name %}
+        <p id="sender-name">@{{ sender.name }}</p>
+        {% endfor %}
+      </div>
+      <form method="POST" action="{{ url_for('invite_receiver', room_id=room_id) }}">
+        <button type="submit">追加</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

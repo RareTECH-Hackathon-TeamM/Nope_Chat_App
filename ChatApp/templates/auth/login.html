@@ -1,0 +1,73 @@
+{% extends "auth/base.html" %}
+{% block title %}ログイン - Nope App{% endblock %}
+{% block content %}
+<form action="{{ url_for('login') }}" method="POST" class="main-container" id="login">
+  {{ form.hidden_tag() }}
+  <div class="wrapper-contents">
+    <img src="{{ url_for('static', filename='img/Logo.png' ) }}" alt="サービス”NOPE”ロゴ">
+    <div class="container-form-login">
+      <div class="wrapper" id="id">
+        <div class="wrapper-field">
+          <p class="label_primary-input-field">
+            {{ form.email.label }}
+          </p>
+          {{ form.email(class="input-field", size=32) }}
+          {% for error in form.email.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+          {% for error in form.email.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+        </div>
+        <div class="wrapper-field">
+          <p class="label_primary-input-field">
+            {{ form.password.label }}
+          </p>
+          {{ form.password(class="input-field", size=32) }}
+          {% for error in form.password.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+        </div>
+      </div>
+      <button type="submit" class="button-login">
+        <img src="../../static/img/icon-sign-in.png" alt="ログインアイコン" class="icon">ログイン
+      </button>
+    </div>
+    <div class="nav-signup">
+      <p class="label_secondary">はじめての方はこちら</p>
+      <button type="button" onclick="location.href='{{ url_for('signup') }}'" class="nav_button-signup">
+        <img src="../../static/img/icon-file-signature.png" alt="新規登録アイコン" class="icon">新規登録
+      </button>
+      <!-- <a href="{{ url_for('signup') }}">新規登録</a> -->
+    </div>
+  </div>
+
+  {# {{ form.submit(class="button-login") }} #}
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <ul class="flashes">
+    {% for message in messages %}
+    <li>
+      {{ message}}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% endwith %}
+
+  {# <label for="email">Email</label>
+  <input type="email" id="email" name="email" placeholder="Email" required value="{{ form.email.data or '' }}"
+    oninvalid="this.setCustomValidity('メールアドレスを入力してください')" oninput="this.setCustomValidity('')">
+  <label for="password">Password</label>
+  <input type="password" id="password" name="password" placeholder="Password" required
+    oninvalid="this.setCustomValidity('パスワードを入力してください')" oninput="this.setCustomValidity('')">
+  <button type="submit">➡️ ログイン</button> #}
+</form>
+<!-- {% if error %}
+<div class="error-message" aria-live="polite">
+  {{ error }}
+</div>
+{% endif %} -->
+
+{% endblock %}
