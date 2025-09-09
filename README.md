@@ -2,8 +2,19 @@
 <br>
 <img width="5334" height="3000" alt="Mチーム-2-1" src="https://github.com/user-attachments/assets/2c0c0633-dd30-47bc-baf2-95f20be81913" />
 
-
 # アプリ概要
+
+## DEMO
+
+
+	
+
+
+https://github.com/user-attachments/assets/0138588f-f58b-49e8-aaba-e95780a33da9
+
+
+
+
 
 ## コンセプト
 我々Team Mは、 _"繋がりすぎる時代"_ にちょっと距離感のあるチャットアプリを考えました。\
